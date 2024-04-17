@@ -3,18 +3,19 @@ use log::{debug, info, trace, warn};
 
 use crate::close_error;
 use crate::const_areas;
-use crate::down_app;
+use crate::file_status;
 
 use crate::get_episode;
 use crate::misc_fun;
 use crate::podcast_scroll;
+use crate::render_app;
 use crate::the_types;
 use crossterm::event::{MouseButton::Left, MouseEvent, MouseEventKind};
 use ratatui::prelude::*;
 
 pub fn do_click_mouse(
     the_frame: &mut Frame,
-    the_app: &mut down_app::DownApp,
+    the_app: &mut render_app::DownApp,
     mouse_event: MouseEvent,
 ) -> bool {
     let column = mouse_event.column;
@@ -33,13 +34,20 @@ pub fn do_click_mouse(
             the_app.ui_state = the_types::UiState::State003ClickedAdd;
         }
     }
-    if misc_fun::point_in_rect(column, row, const_areas::PODCAST_AREA) {
+    let elastic_pod_area = close_error::get_podcast_area(the_frame);
+    if misc_fun::point_in_rect(column, row, elastic_pod_area) {
         do_pod_click(the_app, mouse_event);
     }
-    if misc_fun::point_in_rect(column, row, const_areas::EPISODE_AREA) {
+    let elastic_epi_area = close_error::get_episode_area(the_frame);
+    if misc_fun::point_in_rect(column, row, elastic_epi_area) {
         do_episode_click(the_app, mouse_event);
     }
-    let pop_close_area = close_error::get_pop_close_area(the_frame); // changes with frame
+
+    if misc_fun::point_in_rect(column, row, const_areas::RADIO_AREA) {
+        do_radio_click(the_app, mouse_event);
+    }
+
+    let pop_close_area = close_error::get_pop_close_area(the_frame);
     if misc_fun::point_in_rect(column, row, pop_close_area) {
         the_app.ui_state = the_types::UiState::StateNoFocus;
     }
@@ -52,7 +60,7 @@ pub fn do_click_mouse(
     false
 }
 
-fn do_pod_click(the_app: &mut down_app::DownApp, mouse_event: MouseEvent) -> () {
+fn do_pod_click(the_app: &mut render_app::DownApp, mouse_event: MouseEvent) -> () {
     let scroll_offest_pod = the_app.scrolled_podcasts;
     let num_podcasts = the_app.ordered_podcasts.len();
     let is_o = misc_fun::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
@@ -60,7 +68,8 @@ fn do_pod_click(the_app: &mut down_app::DownApp, mouse_event: MouseEvent) -> () 
         let row = mouse_event.row as usize;
         let m_ev_kind = mouse_event.kind;
         if left_click(m_ev_kind) {
-            let the_offset = scroll_offest_pod + row - const_areas::START_Y_PODCAST_US - 1;
+            let start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
+            let the_offset = scroll_offest_pod + row - start_y_podcast - 1;
             let the_choice = &the_app.ordered_podcasts[the_offset];
 
             the_app.selected_podcast = the_choice.to_string();
@@ -79,7 +88,7 @@ fn left_click(kind_click: MouseEventKind) -> bool {
     false
 }
 
-fn do_episode_click(the_app: &mut down_app::DownApp, episode_click: MouseEvent) -> () {
+fn do_episode_click(the_app: &mut render_app::DownApp, episode_click: MouseEvent) -> () {
     let scroll_offest_epi = the_app.scrolled_episodes;
     let num_episodes = the_app.ordered_episodes.len();
     let is_o = misc_fun::below_episodes(episode_click, scroll_offest_epi, num_episodes);
@@ -87,7 +96,8 @@ fn do_episode_click(the_app: &mut down_app::DownApp, episode_click: MouseEvent) 
         let row = episode_click.row as usize;
         let m_ev_kind = episode_click.kind;
         if left_click(m_ev_kind) {
-            let the_offset = scroll_offest_epi + row - const_areas::START_Y_PODCAST_US - 1;
+            let start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
+            let the_offset = scroll_offest_epi + row - start_y_podcast - 1;
             let the_choice = &the_app.ordered_episodes[the_offset];
 
             the_app.selected_episode = the_choice.to_string();
@@ -101,4 +111,11 @@ fn do_episode_click(the_app: &mut down_app::DownApp, episode_click: MouseEvent) 
     }
     the_app.selected_episode = "-episode-click-outside-".to_string();
     return;
+}
+
+fn do_radio_click(the_app: &mut render_app::DownApp, episode_click: MouseEvent) -> () {
+    let row = episode_click.row;
+    let speed_chosen = row - const_areas::RADIO_Y_START - 1;
+    the_app.fast_med_slow = speed_chosen;
+    file_status::change_speed(speed_chosen);
 }

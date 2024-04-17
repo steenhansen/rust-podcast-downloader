@@ -1,19 +1,19 @@
-use crate::down_app;
-
+use crate::const_areas;
 use crate::input_box;
 use crate::misc_fun;
+use crate::render_app;
 use crate::the_types;
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 use ratatui::{prelude::*, widgets::*};
 
-pub fn render_pop_up_close(the_app: &mut down_app::DownApp, console_frame: &mut Frame) {
+pub fn render_pop_up_close(the_app: &mut render_app::DownApp, console_frame: &mut Frame) {
     if the_app.ui_state == the_types::UiState::StateWaitForPopErrorClose {
         draw_close_popup(the_app, console_frame);
     }
 }
 
-fn draw_close_popup(the_app: &mut down_app::DownApp, console_frame: &mut Frame) {
+fn draw_close_popup(the_app: &mut render_app::DownApp, console_frame: &mut Frame) {
     let area = console_frame.size();
 
     let create_block = |title| {
@@ -51,10 +51,43 @@ pub fn get_pop_close_area(console_frame: &mut Frame) -> Rect {
 pub fn get_end_prog_area(console_frame: &mut Frame) -> Rect {
     let area_frame = console_frame.size();
     let up_right_area = Rect {
-        y: 0,
         x: area_frame.width - 5,
+        y: 0,
         width: 5,
         height: 3,
     };
     up_right_area
+}
+
+pub fn get_episode_area(console_frame: &mut Frame) -> Rect {
+    let area_frame = console_frame.size();
+    let elastic_episodes_area = Rect {
+        x: const_areas::START_X_EPISODE,
+        y: const_areas::START_Y_EPISODE,
+        width: area_frame.width - 10,
+        height: area_frame.height - 10,
+    };
+    elastic_episodes_area
+}
+
+pub fn get_podcast_area(console_frame: &mut Frame) -> Rect {
+    let area_frame = console_frame.size();
+    let elastic_podcasts_area = Rect {
+        x: const_areas::START_X_PODCAST,
+        y: const_areas::START_Y_PODCAST,
+        width: const_areas::WIDTH_PODCAST,
+        height: area_frame.height - 10,
+    };
+    elastic_podcasts_area
+}
+
+pub fn get_status_area(console_frame: &mut Frame) -> Rect {
+    let area_frame = console_frame.size();
+    let status_area = Rect {
+        x: 0,
+        y: area_frame.height - 1,
+        width: area_frame.width,
+        height: 1,
+    };
+    status_area
 }

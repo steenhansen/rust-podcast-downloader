@@ -10,7 +10,7 @@ use std::io::prelude::*;
 use std::path::Path;
 
 use crate::const_globals;
-use crate::down_app;
+use crate::render_app;
 use ratatui::layout::Rect;
 use ratatui::style::Stylize;
 use ratatui::{prelude::*, widgets::*};
@@ -37,7 +37,8 @@ pub fn read_podcast_dir(root_dir: &str) -> HashMap<String, String> {
     }
     the_x_podcasts
 }
-pub fn create_pod_dir(the_app: &mut down_app::DownApp) -> Result<(), io::Error> {
+
+pub fn create_pod_dir(the_app: &mut render_app::DownApp) -> Result<(), io::Error> {
     the_app.ui_state = the_types::UiState::StateNoFocus;
     fs::create_dir(&the_app.podcast_name)?;
     let f_name = format!("{}/{}", the_app.podcast_name, const_globals::RSS_TEXT_FILE);
@@ -51,7 +52,7 @@ pub fn create_pod_dir(the_app: &mut down_app::DownApp) -> Result<(), io::Error> 
 pub fn podcasts_vscroll(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut down_app::DownApp,
+    the_app: &mut render_app::DownApp,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
     console_frame.render_stateful_widget(
@@ -63,7 +64,7 @@ pub fn podcasts_vscroll(
     );
 }
 
-pub fn get_dirs_of_podcasts(the_app: &mut down_app::DownApp) {
+pub fn get_dirs_of_podcasts(the_app: &mut render_app::DownApp) {
     let unordered_podcasts = read_podcast_dir("./");
     the_app.ordered_podcasts = <HashMap<String, String> as Clone>::clone(&unordered_podcasts)
         .into_iter()
@@ -77,7 +78,7 @@ pub fn get_dirs_of_podcasts(the_app: &mut down_app::DownApp) {
 pub fn render_pod_list(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut down_app::DownApp,
+    the_app: &mut render_app::DownApp,
     box_title: String,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());

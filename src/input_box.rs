@@ -2,7 +2,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::down_app;
+use crate::{const_globals, render_app};
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
@@ -18,6 +18,20 @@ use std::io::stdout;
 
 use std::str;
 
+//   Style::new().dark_gray().on_black()
+pub fn render_status(
+    console_frame: &mut Frame,
+    draw_area: Rect,
+    _the_app: &mut render_app::DownApp,
+    box_title: &str,
+) {
+    let area_safe = draw_area.intersection(console_frame.size());
+    let title = Block::new()
+        .title_alignment(Alignment::Center)
+        .title(box_title.bold().dark_gray());
+    console_frame.render_widget(title, area_safe);
+}
+
 pub fn render_close(console_frame: &mut Frame, draw_area: Rect, box_title: &str) {
     let area_safe = draw_area.intersection(console_frame.size());
     let paragraph = Paragraph::new(box_title)
@@ -30,7 +44,7 @@ pub fn render_close(console_frame: &mut Frame, draw_area: Rect, box_title: &str)
 pub fn render_button(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut down_app::DownApp,
+    the_app: &mut render_app::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -39,14 +53,14 @@ pub fn render_button(
     if the_app.podcast_url.len() > 0 && the_app.podcast_name.len() > 0 {
         console_frame.render_widget(paragraph.on_green(), area_safe);
     } else {
-        console_frame.render_widget(paragraph.on_red(), area_safe);
+        console_frame.render_widget(paragraph.on_dark_gray(), area_safe);
     }
 }
 
 pub fn render_name(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut down_app::DownApp,
+    the_app: &mut render_app::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -54,22 +68,11 @@ pub fn render_name(
     let is_edit = the_app.ui_state == the_types::UiState::State002NewPodcastName;
     render_box(area_safe, console_frame, box_title, draw_name, is_edit);
 }
-pub fn render_url(
-    console_frame: &mut Frame,
-    draw_area: Rect,
-    the_app: &mut down_app::DownApp,
-    box_title: &str,
-) {
-    let area_safe = draw_area.intersection(console_frame.size());
-    let draw_name = the_app.podcast_url.clone();
-    let is_edit = the_app.ui_state == the_types::UiState::State001NewPodcastUrl;
-    render_box(area_safe, console_frame, box_title, draw_name, is_edit);
-}
 
 pub fn render_title(
     console_frame: &mut Frame,
     draw_area: Rect,
-    _the_app: &mut down_app::DownApp,
+    _the_app: &mut render_app::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -133,4 +136,53 @@ pub fn render_box(
         let cursor = " ".bold().style(Style::new().black().on_white());
         console_frame.render_widget(cursor, white_square);
     }
+}
+
+pub fn render_url(
+    console_frame: &mut Frame,
+    draw_area: Rect,
+    the_app: &mut render_app::DownApp,
+    box_title: &str,
+) {
+    let area_safe = draw_area.intersection(console_frame.size());
+    let draw_name = the_app.podcast_url.clone();
+    let is_edit = the_app.ui_state == the_types::UiState::State001NewPodcastUrl;
+    render_box(area_safe, console_frame, box_title, draw_name, is_edit);
+}
+
+pub fn render_radio(
+    console_frame: &mut Frame,
+    draw_area: Rect,
+    the_app: &mut render_app::DownApp,
+    box_title: &str,
+) {
+    let area_safe = draw_area.intersection(console_frame.size());
+    let box_style = Style::new().white().on_black();
+
+    let fast_radio = match the_app.fast_med_slow == 0 {
+        true => "[X] ",
+        false => "[O] ",
+    };
+    let med_radio = match the_app.fast_med_slow == 1 {
+        true => "\n[X] ",
+        false => "\n[O] ",
+    };
+    let slow_radio = match the_app.fast_med_slow == 2 {
+        true => "\n[X] ",
+        false => "\n[O] ",
+    };
+
+    let the_text = fast_radio.to_owned()
+        + const_globals::RADIO_RESOURCES[0]
+        + med_radio
+        + const_globals::RADIO_RESOURCES[1]
+        + slow_radio
+        + const_globals::RADIO_RESOURCES[2];
+
+    let paragraph = Paragraph::new(the_text)
+        .block(Block::new().title(box_title).borders(Borders::ALL))
+        .style(box_style)
+        .alignment(Alignment::Left)
+        .wrap(Wrap { trim: true });
+    console_frame.render_widget(paragraph, area_safe);
 }

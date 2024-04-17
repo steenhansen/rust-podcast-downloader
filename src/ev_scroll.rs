@@ -1,16 +1,22 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::const_areas;
-use crate::down_app;
-
+use crate::close_error;
+//use crate::const_areas;
 use crate::misc_fun;
+use crate::render_app;
 use crossterm::event::{MouseEvent, MouseEventKind};
+use ratatui::prelude::*;
 
-pub fn do_pod_scroll(the_app: &mut down_app::DownApp, mouse_event: MouseEvent) -> () {
+pub fn do_pod_scroll(
+    the_app: &mut render_app::DownApp,
+    mouse_event: MouseEvent,
+    console_frame: &mut Frame,
+) -> () {
     let column = mouse_event.column;
     let row = mouse_event.row;
-    if misc_fun::point_in_rect(column, row, const_areas::PODCAST_AREA) {
+    let elastic_pod_area = close_error::get_podcast_area(console_frame);
+    if misc_fun::point_in_rect(column, row, elastic_pod_area) {
         if mouse_event.kind == MouseEventKind::ScrollUp {
             the_app.scrolled_podcasts = the_app.scrolled_podcasts.saturating_sub(1);
             the_app.state_scroll_podcasts = the_app
@@ -29,7 +35,8 @@ pub fn do_pod_scroll(the_app: &mut down_app::DownApp, mouse_event: MouseEvent) -
             }
         }
     }
-    if misc_fun::point_in_rect(column, row, const_areas::EPISODE_AREA) {
+    let elastic_epi_area = close_error::get_episode_area(console_frame);
+    if misc_fun::point_in_rect(column, row, elastic_epi_area) {
         if mouse_event.kind == MouseEventKind::ScrollUp {
             the_app.scrolled_episodes = the_app.scrolled_episodes.saturating_sub(1);
             the_app.state_scroll_episodes = the_app

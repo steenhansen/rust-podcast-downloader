@@ -1,7 +1,7 @@
 //             //https://docs.rs/ratatui/latest/src/tabs/tabs.rs.html#144
 use crate::const_globals;
-use crate::down_app;
 use crate::misc_fun;
+use crate::render_app;
 use crate::rss_xml;
 
 use crate::the_types;
@@ -13,6 +13,25 @@ use log::{debug, info, trace, warn};
 use std::collections::HashMap;
 use std::fs;
 use std::{convert::TryFrom, time::Duration};
+
+pub fn erase_working(the_app: &mut render_app::DownApp) {
+    // std::io::Result<()> {
+    let rss_dir = format!("./{}", the_app.selected_podcast);
+    if !the_app.init_erased_dirs.contains_key(&rss_dir) {
+        let dir_entries = fs::read_dir(&rss_dir).unwrap();
+        for an_entry in dir_entries {
+            let the_entry = an_entry.expect("bard2");
+            let the_path = the_entry.path();
+            if the_path.is_file() {
+                let path_str = the_path.to_str().unwrap();
+                if path_str.ends_with(const_globals::WORKING_FILE) {
+                    fs::remove_file(path_str).unwrap(); //?;
+                }
+            }
+        }
+        the_app.init_erased_dirs.insert(rss_dir, true);
+    }
+}
 
 pub fn read_rss22(file_name: &str) -> the_types::Result<String> {
     let mut writer = Vec::new();
@@ -32,7 +51,8 @@ pub fn read_rss22(file_name: &str) -> the_types::Result<String> {
     Ok(real_str)
 }
 
-pub fn get_epi_list(the_app: &mut down_app::DownApp) -> the_types::Result<()> {
+pub fn get_epi_list(the_app: &mut render_app::DownApp) -> the_types::Result<()> {
+    erase_working(the_app);
     let rss_file = format!(
         "{}/{}",
         the_app.selected_podcast,

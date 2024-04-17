@@ -1,9 +1,9 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
+use crate::const_globals;
 use crate::file_status;
 use crate::type_partial_range_iter;
-
 use reqwest::blocking::Client;
 
 use reqwest::header::CONTENT_LENGTH;
@@ -14,6 +14,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
 use std::str::FromStr;
+use std::thread;
 use std::time::Duration;
 
 pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
@@ -82,11 +83,13 @@ pub fn media_chunk(
     url_episode: String,
     local_file: String,
 ) -> type_partial_range_iter::Result<()> {
-    let mut output_file = File::create(&local_file)?;
+    let working_file = local_file.clone() + const_globals::WORKING_FILE; //"-working";
+    let mut output_file = File::create(&working_file)?;
     let timeout_duration = Duration::from_secs(100);
     let xx = type_partial_range_iter::PartialRangeIter::new(0, file_size - 1, chunk_size)?;
     let mut ind = 0;
     for range in xx {
+        speed_sleep();
         ind += 1;
         let byte_count = chunk_size * ind;
         let mut response_chunk = client
@@ -103,7 +106,17 @@ pub fn media_chunk(
         }
         std::io::copy(&mut response_chunk, &mut output_file)?;
     }
+    fs::rename(working_file, &local_file)?;
     file_status::remove_status(&local_file);
 
     Ok(())
+}
+
+fn speed_sleep() {
+    let cur_speed = file_status::get_speed();
+    match cur_speed {
+        0 => return,                                 // fast
+        1 => thread::sleep(Duration::from_secs(2)),  // med
+        _ => thread::sleep(Duration::from_secs(10)), // slow
+    }
 }

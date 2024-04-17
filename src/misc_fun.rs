@@ -55,7 +55,10 @@ pub fn below_podcasts(
 ) -> bool {
     let row = mouse_event.row as usize;
     let visible_podcasts = sorted_len - scrolled_podcasts;
-    let last_podcast_y = const_areas::START_Y_PODCAST_US + visible_podcasts;
+
+    let start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
+
+    let last_podcast_y = start_y_podcast + visible_podcasts;
     if row > last_podcast_y {
         return true;
     }
@@ -69,7 +72,10 @@ pub fn below_episodes(
 ) -> bool {
     let row = mouse_event.row as usize;
     let visible_episodes = sorted_len - scrolled_episodes;
-    let last_episode_y = const_areas::START_Y_EPISODE_US + visible_episodes;
+
+    let start_y_episode: usize = const_areas::START_Y_EPISODE as usize;
+
+    let last_episode_y = start_y_episode + visible_episodes;
     if row > last_episode_y {
         return true;
     }
