@@ -1,0 +1,26 @@
+ color!(black);
+    color!(red);
+    color!(green);
+    color!(yellow);
+    color!(blue);
+    color!(magenta);
+    color!(cyan);
+    color!(gray);
+    color!(dark_gray);
+    color!(light_red);
+    color!(light_green);
+    color!(light_yellow);
+    color!(light_blue);
+    color!(light_magenta);
+    color!(light_cyan);
+    color!(white);
+
+    modifier!(bold);
+    modifier!(dim);
+    modifier!(italic);
+    modifier!(underlined);
+    modifier!(slow_blink);
+    modifier!(rapid_blink);
+    modifier!(reversed);
+    modifier!(hidden);
+    modifier!(crossed_out);

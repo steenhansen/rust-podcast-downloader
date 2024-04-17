@@ -1,0 +1,51 @@
+#[allow(unused)]
+use log::{debug, info, trace, warn};
+
+use crate::const_areas;
+use crate::down_app;
+
+use crate::misc_fun;
+use crossterm::event::{MouseEvent, MouseEventKind};
+
+pub fn do_pod_scroll(the_app: &mut down_app::DownApp, mouse_event: MouseEvent) -> () {
+    let column = mouse_event.column;
+    let row = mouse_event.row;
+    if misc_fun::point_in_rect(column, row, const_areas::PODCAST_AREA) {
+        if mouse_event.kind == MouseEventKind::ScrollUp {
+            the_app.scrolled_podcasts = the_app.scrolled_podcasts.saturating_sub(1);
+            the_app.state_scroll_podcasts = the_app
+                .state_scroll_podcasts
+                .position(the_app.scrolled_podcasts);
+        }
+
+        if mouse_event.kind == MouseEventKind::ScrollDown {
+            let num_podcasts = the_app.ordered_podcasts.len();
+            let pod_scroll_pos = the_app.scrolled_podcasts;
+            if pod_scroll_pos + 1 < num_podcasts {
+                the_app.scrolled_podcasts = the_app.scrolled_podcasts.saturating_add(1);
+                the_app.state_scroll_podcasts = the_app
+                    .state_scroll_podcasts
+                    .position(the_app.scrolled_podcasts);
+            }
+        }
+    }
+    if misc_fun::point_in_rect(column, row, const_areas::EPISODE_AREA) {
+        if mouse_event.kind == MouseEventKind::ScrollUp {
+            the_app.scrolled_episodes = the_app.scrolled_episodes.saturating_sub(1);
+            the_app.state_scroll_episodes = the_app
+                .state_scroll_episodes
+                .position(the_app.scrolled_episodes);
+        }
+
+        if mouse_event.kind == MouseEventKind::ScrollDown {
+            let num_episodes = the_app.ordered_episodes.len();
+            let epi_scroll_pos = the_app.scrolled_episodes;
+            if epi_scroll_pos + 1 < num_episodes {
+                the_app.scrolled_episodes = the_app.scrolled_episodes.saturating_add(1);
+                the_app.state_scroll_episodes = the_app
+                    .state_scroll_episodes
+                    .position(the_app.scrolled_episodes);
+            }
+        }
+    }
+}
