@@ -4,15 +4,15 @@ use log::{debug, info, trace, warn};
 use crate::ev_click;
 use crate::ev_key;
 
+use crate::app_ui;
 use crate::ev_scroll;
 use crate::misc_fun;
-use crate::render_app;
 
 use crossterm::event::{self, Event, KeyEventKind};
 
 use ratatui::prelude::*;
 
-pub fn all_events_done(the_frame: &mut Frame, the_app: &mut render_app::DownApp) -> bool {
+pub fn all_events_done(the_frame: &mut Frame, the_app: &mut app_ui::DownApp) -> bool {
     match event::read().unwrap() {
         Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
             if misc_fun::is_control_c(key_event) {

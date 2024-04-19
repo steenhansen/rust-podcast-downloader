@@ -1,20 +1,16 @@
-use crate::const_globals;
-//             //https://docs.rs/ratatui/latest/src/tabs/tabs.rs.html#144
-use crate::render_app;
-
-use crate::file_status;
 #[allow(unused)]
 use log::{debug, info, trace, warn};
+
+use crate::app_ui;
+use crate::const_globals;
+
+use crate::g_current_active;
 use ratatui::layout::Rect;
 use ratatui::style::Stylize;
 use ratatui::{prelude::*, widgets::*};
 use std::collections::HashMap;
 
-pub fn episode_vscroll(
-    console_frame: &mut Frame,
-    draw_area: Rect,
-    the_app: &mut render_app::DownApp,
-) {
+pub fn episode_vscroll(console_frame: &mut Frame, draw_area: Rect, the_app: &mut app_ui::DownApp) {
     let area_safe = draw_area.intersection(console_frame.size());
     console_frame.render_stateful_widget(
         Scrollbar::new(ScrollbarOrientation::VerticalRight)
@@ -28,7 +24,7 @@ pub fn episode_vscroll(
 pub fn render_epi_list(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut render_app::DownApp,
+    the_app: &mut app_ui::DownApp,
     box_title: String,
 ) {
     let ordered_episodes = the_app.ordered_episodes.clone();
@@ -52,7 +48,7 @@ pub fn render_epi_list(
 pub fn render_epi_list_empty(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut render_app::DownApp,
+    the_app: &mut app_ui::DownApp,
     _box_title: String,
 ) {
     let episode_title = format!("{}", the_app.selected_podcast);
@@ -73,7 +69,7 @@ pub fn render_epi_list_empty(
 fn colored_episodes(
     ordered_episodes: Vec<String>,
     local_episode_files: HashMap<String, String>,
-    the_app: &mut render_app::DownApp,
+    the_app: &mut app_ui::DownApp,
 ) -> Vec<Line<'static>> {
     let text: Vec<Line> = ordered_episodes
         .into_iter()
@@ -81,10 +77,9 @@ fn colored_episodes(
             if local_episode_files.contains_key(&p_name) {
                 Line::from(p_name.dark_gray())
             } else {
-                let cur_read_status = file_status::G_SS.lock().unwrap();
+                let cur_read_status = g_current_active::G_CURRENT_ACTIVE.lock().unwrap();
                 let selected_podcast = &the_app.selected_podcast;
                 let full_epi_name = format!("{selected_podcast}/{p_name}");
-                //https://ratatui.rs/how-to/render/style-text/
                 match cur_read_status.get(&full_epi_name) {
                     Some(num_bytes) => {
                         if num_bytes == const_globals::DOWNLOADED_MEDIA {

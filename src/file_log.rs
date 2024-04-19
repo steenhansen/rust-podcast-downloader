@@ -22,18 +22,14 @@ pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
     clear_log.write_all(b"").unwrap();
 
     let log_level = log::LevelFilter::Error;
-    // Build a stderr logger.
     let std_err = ConsoleAppender::builder().target(Target::Stderr).build();
 
-    // Logging to log file.
     let log_file = FileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
         .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
         .build(file_path)
         .unwrap();
 
-    // Log Trace level output to file where trace is the default level
-    // and the programmatically specified level to stderr.
     let log_config = Config::builder()
         .appender(Appender::builder().build("logfile", Box::new(log_file)))
         .appender(
@@ -48,19 +44,12 @@ pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
                 .build(LevelFilter::Trace),
         )
         .unwrap();
-
-    // Use this to change log levels at runtime.
-    // This means you can change the default log level to trace
-    // if you are trying to deb ug an issue and need more logs on then turn it off
-    // once you are done.
-    // _handle = log4rs::init_config(config);
-    let handle = log4rs::init_config(log_config);
-
-    handle
+    let _handle = log4rs::init_config(log_config);
+    _handle
 }
 
 pub fn trace_off() {
-    log::set_max_level(LevelFilter::Warn);
+    log::set_max_level(LevelFilter::Error); // warn
 }
 
 pub fn trace_on() {

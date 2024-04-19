@@ -2,7 +2,8 @@
 use log::{debug, info, trace, warn};
 
 use crate::const_globals;
-use crate::file_status;
+use crate::g_current_active;
+use crate::g_resource_speed;
 use crate::type_partial_range_iter;
 use reqwest::blocking::Client;
 
@@ -67,9 +68,7 @@ pub fn read_file(
     };
     let client = reqwest::blocking::Client::new();
     let local_file = format!("{}/{}", sel_podcast, file_name);
-
-    file_status::change_status(&local_file, 0);
-
+    g_current_active::change_status(&local_file, 0);
     const CHUNK_SIZE: u32 = 1_000_000; // 134
     let _ = media_chunk(file_size, CHUNK_SIZE, client, url_episode, local_file);
     Ok(())
@@ -98,7 +97,7 @@ pub fn media_chunk(
             .timeout(timeout_duration)
             .send()?;
 
-        file_status::change_status(&local_file, byte_count);
+        g_current_active::change_status(&local_file, byte_count);
 
         let status = response_chunk.status();
         if !(status == StatusCode::OK || status == StatusCode::PARTIAL_CONTENT) {
@@ -107,13 +106,13 @@ pub fn media_chunk(
         std::io::copy(&mut response_chunk, &mut output_file)?;
     }
     fs::rename(working_file, &local_file)?;
-    file_status::remove_status(&local_file);
+    g_current_active::remove_status(&local_file);
 
     Ok(())
 }
 
 fn speed_sleep() {
-    let cur_speed = file_status::get_speed();
+    let cur_speed = g_resource_speed::get_speed();
     match cur_speed {
         0 => return,                                 // fast
         1 => thread::sleep(Duration::from_secs(2)),  // med

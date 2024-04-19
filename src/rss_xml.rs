@@ -1,4 +1,3 @@
-//             //https://docs.rs/ratatui/latest/src/tabs/tabs.rs.html#144
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
@@ -14,7 +13,7 @@ fn search_textss(the_text: String) -> String {
     //    let first_jpeg = Regex::new(r####"=('|")[^"]*.jpg("|')"####).unwrap();
     let first_jpeg = Regex::new(const_globals::FIND_PICTURES).unwrap();
 
-    let possible_jpeg = first_jpeg.find(the_text.as_str()); //  https://rregex.dev/?version=1.10&method=find
+    let possible_jpeg = first_jpeg.find(the_text.as_str());
     match possible_jpeg {
         Some(the_match) => {
             let match_jpg = the_match.as_str();

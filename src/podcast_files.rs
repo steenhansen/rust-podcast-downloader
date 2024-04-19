@@ -1,7 +1,8 @@
 //             //https://docs.rs/ratatui/latest/src/tabs/tabs.rs.html#144
+use crate::app_ui;
 use crate::const_globals;
 use crate::misc_fun;
-use crate::render_app;
+use crate::podcast_scroll;
 use crate::rss_xml;
 
 use crate::the_types;
@@ -14,7 +15,7 @@ use std::collections::HashMap;
 use std::fs;
 use std::{convert::TryFrom, time::Duration};
 
-pub fn erase_working(the_app: &mut render_app::DownApp) {
+pub fn erase_working(the_app: &mut app_ui::DownApp) {
     // std::io::Result<()> {
     let rss_dir = format!("./{}", the_app.selected_podcast);
     if !the_app.init_erased_dirs.contains_key(&rss_dir) {
@@ -51,7 +52,7 @@ pub fn read_rss22(file_name: &str) -> the_types::Result<String> {
     Ok(real_str)
 }
 
-pub fn get_epi_list(the_app: &mut render_app::DownApp) -> the_types::Result<()> {
+pub fn get_epi_list(the_app: &mut app_ui::DownApp) -> the_types::Result<()> {
     erase_working(the_app);
     let rss_file = format!(
         "{}/{}",
@@ -74,16 +75,20 @@ pub fn get_epi_list(the_app: &mut render_app::DownApp) -> the_types::Result<()> 
     the_app.ordered_episodes = Vec::new();
     the_app.episode_2_url = HashMap::new();
 
+    let is_in_prefix =
+        podcast_scroll::is_int_prefix(const_globals::ROOT_DIR, &the_app.selected_podcast);
+
     for title_and_url in &pos_titles_urls {
         let (pod_index, actual_title, actual_url) = title_and_url;
         let file_type = misc_fun::file_type_real(actual_url.to_string());
-        let index_usized = *pod_index as usize;
-        let str_index = format!(
-            "{:0width$}",
-            index_usized,
-            width = const_globals::LEADING_0_SIZE
-        );
-        let title_str = str_index + "_" + actual_title.as_str() + "." + file_type.as_str();
+        let episode_index = *pod_index as usize;
+
+        let mut title_str = actual_title.to_owned() + "." + file_type.as_str();
+
+        if is_in_prefix {
+            let str_index = misc_fun::epi_prefix_num(episode_index);
+            title_str = str_index.to_owned() + "_" + &title_str;
+        }
 
         the_app.ordered_episodes.push(title_str.clone());
         the_app

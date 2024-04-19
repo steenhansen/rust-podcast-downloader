@@ -1,24 +1,28 @@
 #![warn(clippy::pedantic)]
 #![allow(clippy::wildcard_imports)]
 
-mod all_events;
+mod app_ui;
+mod area_rects;
+mod areas_consts;
 mod close_error;
-mod const_areas;
 mod const_globals;
 mod episode_scroll;
+mod episode_threads;
 mod episodes_files;
 mod ev_after_draw;
+mod ev_all;
 mod ev_click;
 mod ev_key;
 mod ev_scroll;
 mod file_log;
-mod file_status;
-mod get_episode;
-mod input_box;
+mod g_current_active;
+mod g_resource_speed;
 mod misc_fun;
 mod podcast_files;
 mod podcast_scroll;
-mod render_app;
+mod render_add;
+mod render_misc;
+mod render_radio_check;
 mod rss_xml;
 mod the_types;
 mod tui_term;
@@ -40,7 +44,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut terminal = tui_term::init(const_globals::DEBUG_FILE)?;
 
     let tick_rate = Duration::from_millis(100);
-    let app = render_app::DownApp::default();
+    let app = app_ui::DownApp::default();
     let res = run_app(&mut terminal, app, tick_rate);
     tui_term::restore(terminal, res)?;
     Ok(())
@@ -48,19 +52,19 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 fn run_app<B: Backend>(
     terminal: &mut Terminal<B>,
-    mut the_app: render_app::DownApp,
+    mut the_app: app_ui::DownApp,
     tick_rate: Duration,
 ) -> io::Result<()> {
     let mut last_tick = Instant::now();
     podcast_scroll::get_dirs_of_podcasts(&mut the_app);
 
     loop {
-        terminal.draw(|f| render_app::draw_ui(f, &mut the_app))?;
+        terminal.draw(|f| app_ui::draw_ui(f, &mut the_app))?;
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if crossterm::event::poll(timeout)? {
             let mut the_frame = terminal.get_frame();
-            let finish = all_events::all_events_done(&mut the_frame, &mut the_app);
+            let finish = ev_all::all_events_done(&mut the_frame, &mut the_app);
             if finish {
                 return Ok(());
             }

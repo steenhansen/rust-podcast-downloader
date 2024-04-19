@@ -1,11 +1,11 @@
+use crate::app_ui;
 use crate::episodes_files;
 use crate::podcast_files;
-use crate::render_app;
 use crate::the_types;
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-pub fn after_ui(the_app: &mut render_app::DownApp) {
+pub fn after_ui(the_app: &mut app_ui::DownApp) {
     if the_app.ui_state == the_types::UiState::State101ReadingRss {
         the_app.ui_state = the_types::UiState::State102ShowWaiting;
     } else if the_app.ui_state == the_types::UiState::State102ShowWaiting {
