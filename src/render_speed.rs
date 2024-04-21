@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::{app_ui, const_globals};
+use crate::{app_state, const_globals};
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
@@ -12,7 +12,7 @@ use ratatui::{prelude::*, widgets::*};
 pub fn render_prefix(
     console_frame: &mut Frame,
     draw_area: Rect,
-    _the_app: &mut app_ui::DownApp,
+    _the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -23,7 +23,7 @@ pub fn render_prefix(
 pub fn render_resources(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());

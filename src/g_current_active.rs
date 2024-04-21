@@ -11,7 +11,7 @@ pub static G_CURRENT_ACTIVE: Lazy<Mutex<HashMap<String, String>>> = Lazy::new(||
     Mutex::new(m)
 });
 
-pub fn get_gss() -> usize {
+pub fn active_downloading() -> usize {
     let number_downing = G_CURRENT_ACTIVE.lock().unwrap().clone();
     let mut actives = 0;
     for (_file, num) in number_downing {

@@ -42,15 +42,15 @@ pub fn is_control_c(key_event: KeyEvent) -> bool {
 
 pub fn below_podcasts(
     mouse_event: MouseEvent,
-    scrolled_podcasts: usize,
+    scrolled_podcasts_pos: usize,
     sorted_len: usize,
 ) -> bool {
     let row = mouse_event.row as usize;
-    let visible_podcasts = sorted_len - scrolled_podcasts;
+    let visible_podcasts = sorted_len - scrolled_podcasts_pos;
 
-    let start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
+    let chunk_start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
 
-    let last_podcast_y = start_y_podcast + visible_podcasts;
+    let last_podcast_y = chunk_start_y_podcast + visible_podcasts;
     if row > last_podcast_y {
         return true;
     }
@@ -59,15 +59,15 @@ pub fn below_podcasts(
 
 pub fn below_episodes(
     mouse_event: MouseEvent,
-    scrolled_episodes: usize,
+    scrolled_episodes_pos: usize,
     sorted_len: usize,
 ) -> bool {
     let row = mouse_event.row as usize;
-    let visible_episodes = sorted_len - scrolled_episodes;
+    let visible_episodes = sorted_len - scrolled_episodes_pos;
 
-    let start_y_episode: usize = areas_consts::START_Y_EPISODE as usize;
+    let chunk_start_y_episode: usize = areas_consts::START_Y_EPISODE as usize;
 
-    let last_episode_y = start_y_episode + visible_episodes;
+    let last_episode_y = chunk_start_y_episode + visible_episodes;
     if row > last_episode_y {
         return true;
     }
@@ -111,31 +111,3 @@ pub fn file_type_real(an_url: String) -> String {
     }
     return "unknown".to_string();
 }
-
-// pub fn point_in_rect(px: u16, py: u16, a_rect: Rect) -> bool {
-//     let l_side = a_rect.x;
-//     let r_side = a_rect.x + a_rect.width;
-//     let inside_hor = l_side <= px && px <= r_side;
-
-//     let t_side = a_rect.y;
-//     let b_side = a_rect.y + a_rect.height;
-//     let inside_ver = t_side <= py && py <= b_side;
-
-//     inside_hor && inside_ver
-// }
-
-// pub fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
-//     let popup_layout = Layout::vertical([
-//         Constraint::Percentage((100 - percent_y) / 2),
-//         Constraint::Percentage(percent_y),
-//         Constraint::Percentage((100 - percent_y) / 2),
-//     ])
-//     .split(r);
-
-//     Layout::horizontal([
-//         Constraint::Percentage((100 - percent_x) / 2),
-//         Constraint::Percentage(percent_x),
-//         Constraint::Percentage((100 - percent_x) / 2),
-//     ])
-//     .split(popup_layout[1])[1]
-// }

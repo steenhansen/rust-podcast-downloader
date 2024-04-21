@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::app_ui;
+use crate::app_state;
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
@@ -15,11 +15,11 @@ use std::str;
 pub fn render_url(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let draw_name = the_app.podcast_url.clone();
+    let draw_name = the_app.new_podcast_url.clone();
     let is_edit = the_app.ui_state == the_types::UiState::State001NewPodcastUrl;
     render_box(area_safe, console_frame, box_title, draw_name, is_edit);
 }
@@ -27,11 +27,11 @@ pub fn render_url(
 pub fn render_name(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let draw_name = the_app.podcast_name.clone();
+    let draw_name = the_app.new_podcast_name.clone();
     let is_edit = the_app.ui_state == the_types::UiState::State002NewPodcastName;
     render_box(area_safe, console_frame, box_title, draw_name, is_edit);
 }
@@ -47,7 +47,7 @@ pub fn render_box(
     let box_style: ratatui::style::Style = if is_edit || has_chars {
         Style::new().white().on_black()
     } else {
-        Style::new().dark_gray().on_black() // https://docs.rs/crossterm/latest/crossterm/style/enum.Color.html
+        Style::new().dark_gray().on_black()
     };
     let paragraph = Paragraph::new(draw_name.clone())
         .block(Block::new().title(the_title).borders(Borders::ALL))
@@ -74,15 +74,41 @@ pub fn render_box(
 pub fn render_add_podcast(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
     let create_block = |title: &'static str| Block::new().gray().title(title.bold());
     let paragraph = Paragraph::new(box_title).white().block(create_block(""));
-    if the_app.podcast_url.len() > 0 && the_app.podcast_name.len() > 0 {
+    if the_app.new_podcast_url.len() > 0 && the_app.new_podcast_name.len() > 0 {
         console_frame.render_widget(paragraph.on_green(), area_safe);
     } else {
         console_frame.render_widget(paragraph.on_dark_gray(), area_safe);
     }
+}
+
+pub fn render_all_podcast(
+    console_frame: &mut Frame,
+    draw_area: Rect,
+    the_app: &mut app_state::DownApp,
+    box_title: &str,
+) {
+    let area_safe = draw_area.intersection(console_frame.size());
+    let create_block = |title: &'static str| Block::new().gray().title(title.bold());
+    let paragraph = Paragraph::new(box_title).white().block(create_block(""));
+
+    if can_do_all(the_app) {
+        console_frame.render_widget(paragraph.on_green(), area_safe);
+    } else {
+        console_frame.render_widget(paragraph.on_dark_gray(), area_safe);
+    }
+}
+
+fn can_do_all(the_app: &mut app_state::DownApp) -> bool {
+    if the_app.selected_podcast.len() > 0
+        && (the_app.local_episode_files.len() != the_app.episode_2_url.len())
+    {
+        return true;
+    }
+    false
 }

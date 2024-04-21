@@ -18,7 +18,7 @@ pub fn point_in_rect(px: u16, py: u16, a_rect: Rect) -> bool {
 }
 
 pub fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
-    let popup_layout = Layout::vertical([
+    let center_layout = Layout::vertical([
         Constraint::Percentage((100 - percent_y) / 2),
         Constraint::Percentage(percent_y),
         Constraint::Percentage((100 - percent_y) / 2),
@@ -30,16 +30,16 @@ pub fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         Constraint::Percentage(percent_x),
         Constraint::Percentage((100 - percent_x) / 2),
     ])
-    .split(popup_layout[1])[1]
+    .split(center_layout[1])[1]
 }
 
-pub fn get_pop_close_area(console_frame: &mut Frame) -> Rect {
+pub fn get_error_close_area(console_frame: &mut Frame) -> Rect {
     let area_frame = console_frame.size();
     let area = centered_rect(60, 20, area_frame);
 
     let mut close_err_area = area;
     close_err_area.x = close_err_area.x + (close_err_area.width / 2) - 2;
-    close_err_area.y = close_err_area.y + (close_err_area.height / 2) - 1;
+    close_err_area.y = close_err_area.y + (close_err_area.height / 2) - 1 + 1;
     close_err_area.width = 5;
     close_err_area.height = 3;
     close_err_area
@@ -52,17 +52,6 @@ pub fn get_quit_area(console_frame: &mut Frame) -> Rect {
         y: 0,
         width: 5,
         height: 3,
-    };
-    up_right_area
-}
-
-pub fn get_prefix_area(console_frame: &mut Frame) -> Rect {
-    let area_frame = console_frame.size();
-    let up_right_area = Rect {
-        x: area_frame.width - 24,
-        y: area_frame.height - 1,
-        width: area_frame.width / 2,
-        height: 1,
     };
     up_right_area
 }
@@ -84,7 +73,7 @@ pub fn get_episode_area(console_frame: &mut Frame) -> Rect {
         x: areas_consts::START_X_EPISODE,
         y: areas_consts::START_Y_EPISODE,
         width: area_frame.width - 10,
-        height: area_frame.height - 10,
+        height: area_frame.height - 9,
     };
     elastic_episodes_area
 }
@@ -95,7 +84,7 @@ pub fn get_podcast_area(console_frame: &mut Frame) -> Rect {
         x: areas_consts::START_X_PODCAST,
         y: areas_consts::START_Y_PODCAST,
         width: areas_consts::WIDTH_PODCAST,
-        height: area_frame.height - 10,
+        height: area_frame.height - 9,
     };
     elastic_podcasts_area
 }

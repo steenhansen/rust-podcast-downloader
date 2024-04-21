@@ -10,36 +10,15 @@ use crate::podcast_scroll;
 use crate::render_add;
 use crate::render_misc;
 
-use crate::render_radio_check;
+use crate::app_state;
+use crate::render_speed;
 use crate::the_types;
 #[allow(unused)]
 use log::{debug, info, trace, warn};
-use ratatui::{prelude::*, widgets::*};
-use std::collections::HashMap;
-#[derive(Default, Debug)]
-pub struct DownApp {
-    pub podcast_name: String,
-    pub podcast_url: String,
-    pub ui_state: the_types::UiState,
-    pub local_episode_files: HashMap<String, String>, //the_app.local_episode_files {"podcast_url.rss": "podcast_url.rss"}
-    pub files_downloading: u16,
-    pub episode_2_url: HashMap<String, String>,
-    pub selected_episode: String,
-    pub selected_podcast: String,
-    pub scrolled_podcasts: usize,
-    pub scrolled_episodes: usize,
-    pub ordered_podcasts: Vec<String>,
-    pub ordered_episodes: Vec<String>, // "0024-a_pod", "0023-crime"
-    pub state_scroll_podcasts: ScrollbarState,
-    pub state_scroll_episodes: ScrollbarState,
-    pub cur_error: String,
-    pub fast_med_slow: u16,
-    pub init_erased_dirs: HashMap<String, bool>,
-    pub int_prefix: bool,
-}
+use ratatui::prelude::*;
 
 #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
-pub fn draw_ui(console_frame: &mut Frame, the_app: &mut DownApp) {
+pub fn draw_ui(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     show_title(console_frame, the_app);
     show_add(console_frame, the_app);
     show_resources(console_frame, the_app);
@@ -49,10 +28,14 @@ pub fn draw_ui(console_frame: &mut Frame, the_app: &mut DownApp) {
     show_status(console_frame, the_app);
     show_prefix(console_frame, the_app);
 
-    close_error::render_pop_up_close(console_frame, the_app);
+    close_error::render_error_close(console_frame, the_app);
+    close_error::render_all_ok(console_frame, the_app);
+    // if the_app.state_scroll_podcasts {
+    //   warn!(" app ui_state {:?}", the_app.ui_state);
+    //}
 }
 
-fn show_title(console_frame: &mut Frame, the_app: &mut DownApp) {
+fn show_title(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     render_misc::render_title(
         console_frame,
         areas_consts::TITLE_AREA,
@@ -61,7 +44,7 @@ fn show_title(console_frame: &mut Frame, the_app: &mut DownApp) {
     );
 }
 
-fn show_add(console_frame: &mut Frame, the_app: &mut DownApp) {
+fn show_add(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     render_add::render_url(
         console_frame,
         areas_consts::NEW_URL_AREA,
@@ -80,9 +63,47 @@ fn show_add(console_frame: &mut Frame, the_app: &mut DownApp) {
         the_app,
         " Add Podcast",
     );
+
+    render_add::render_all_podcast(
+        console_frame,
+        areas_consts::ALL_PODCAST_AREA,
+        the_app,
+        " Download All Episodes",
+    );
 }
 
-fn show_podcasts(console_frame: &mut Frame, the_app: &mut DownApp) {
+fn show_resources(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+    render_speed::render_resources(
+        console_frame,
+        areas_consts::RADIO_AREA,
+        the_app,
+        "Internet Resource Load",
+    );
+}
+fn show_prefix(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+    if the_app.selected_podcast != "" {
+        let is_in_prefix =
+            podcast_scroll::is_int_prefix(const_globals::ROOT_DIR, &the_app.selected_podcast);
+        let prefix_area = areas_consts::PREFIX_AREA;
+        if is_in_prefix {
+            render_speed::render_prefix(
+                console_frame,
+                prefix_area,
+                the_app,
+                "[✓] Names Integer Prefixed",
+            );
+        } else {
+            render_speed::render_prefix(
+                console_frame,
+                prefix_area,
+                the_app,
+                "[ ] Names Integer Prefixed",
+            );
+        }
+    }
+}
+
+fn show_podcasts(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     let elastic_pod_area = area_rects::get_podcast_area(console_frame);
     podcast_scroll::render_pod_list(
         console_frame,
@@ -93,7 +114,7 @@ fn show_podcasts(console_frame: &mut Frame, the_app: &mut DownApp) {
     podcast_scroll::podcasts_vscroll(console_frame, elastic_pod_area, the_app);
 }
 
-fn show_episodes(console_frame: &mut Frame, the_app: &mut DownApp) {
+fn show_episodes(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     if the_app.selected_podcast != "" {
         let elastic_epi_area = area_rects::get_episode_area(console_frame);
         if the_app.ui_state == the_types::UiState::State103ShowEpisodes {
@@ -115,47 +136,18 @@ fn show_episodes(console_frame: &mut Frame, the_app: &mut DownApp) {
     }
 }
 
-fn show_resources(console_frame: &mut Frame, the_app: &mut DownApp) {
-    render_radio_check::render_resources(
-        console_frame,
-        areas_consts::RADIO_AREA,
-        the_app,
-        "Resources",
-    );
-}
-
 fn show_quit(console_frame: &mut Frame) {
     let up_right_area = area_rects::get_quit_area(console_frame);
     render_misc::render_close(console_frame, up_right_area, "X");
 }
 
-fn show_status(console_frame: &mut Frame, the_app: &mut DownApp) {
+fn show_status(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     let status_area = area_rects::get_status_area(console_frame);
-    let num_downloading = g_current_active::get_gss();
-    let stat_mess = format!(" Active Downloading Files {:?}", num_downloading);
+    let num_downloading = g_current_active::active_downloading();
+    let num_waiting = the_app.download_deque.len();
+    let stat_mess = format!(
+        " Active Downloading Files {:?}, Waiting {:?}",
+        num_downloading, num_waiting
+    );
     render_misc::render_status(console_frame, status_area, the_app, &stat_mess);
-    // red if more than 1
-}
-
-fn show_prefix(console_frame: &mut Frame, the_app: &mut DownApp) {
-    if the_app.selected_podcast != "" {
-        let is_in_prefix =
-            podcast_scroll::is_int_prefix(const_globals::ROOT_DIR, &the_app.selected_podcast);
-        let prefix_area = area_rects::get_prefix_area(console_frame);
-        if is_in_prefix {
-            render_radio_check::render_prefix(
-                console_frame,
-                prefix_area,
-                the_app,
-                "[X] Use Integer Prefix",
-            );
-        } else {
-            render_radio_check::render_prefix(
-                console_frame,
-                prefix_area,
-                the_app,
-                "[O] Use Integer Prefix",
-            );
-        }
-    }
 }

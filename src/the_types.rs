@@ -24,8 +24,11 @@ pub enum UiState {
     #[strum(to_string = "StateWaitForPopErrorClose")]
     StateWaitForPopErrorClose,
 
+    #[strum(to_string = "State201AllEpisodes")]
+    State201AllEpisodes,
+    #[strum(to_string = "State202SureAllEpisodes")]
+    State202SureAllEpisodes,
+
     #[strum(to_string = "StateLocalFiles")]
     StateLocalFiles,
 }
-use std::error;
-pub type Result<T> = std::result::Result<T, Box<dyn error::Error>>;

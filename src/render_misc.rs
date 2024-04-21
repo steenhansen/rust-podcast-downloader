@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::app_ui;
+use crate::app_state;
 
 use ratatui::layout::Rect;
 
@@ -10,7 +10,7 @@ use ratatui::{prelude::*, widgets::*};
 pub fn render_status(
     console_frame: &mut Frame,
     draw_area: Rect,
-    _the_app: &mut app_ui::DownApp,
+    _the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -30,7 +30,7 @@ pub fn render_close(console_frame: &mut Frame, draw_area: Rect, box_title: &str)
 pub fn render_title(
     console_frame: &mut Frame,
     draw_area: Rect,
-    _the_app: &mut app_ui::DownApp,
+    _the_app: &mut app_state::DownApp,
     box_title: &str,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());

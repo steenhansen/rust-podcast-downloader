@@ -8,7 +8,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
-use crate::app_ui;
+use crate::app_state;
 use crate::const_globals;
 use ratatui::layout::Rect;
 use ratatui::style::Stylize;
@@ -16,7 +16,7 @@ use ratatui::{prelude::*, widgets::*};
 
 use std::io;
 
-pub fn flip_prefix(the_app: &mut app_ui::DownApp) -> Result<(), io::Error> {
+pub fn flip_prefix(the_app: &mut app_state::DownApp) -> Result<(), io::Error> {
     let selected_podcast = the_app.selected_podcast.clone();
     let is_int_prefix = is_int_prefix(const_globals::ROOT_DIR, &selected_podcast);
     if is_int_prefix {
@@ -60,25 +60,29 @@ pub fn read_podcast_dir(root_dir: &str) -> HashMap<String, String> {
     episodes_local
 }
 
-fn create_new_podcast(podcast_name: &str, contents_url: &str) -> Result<(), io::Error> {
-    fs::create_dir(podcast_name)?;
-    let f_name = format!("{}/{}", podcast_name, const_globals::RSS_TEXT_FILE);
+fn create_new_podcast(new_podcast_name: &str, contents_url: &str) -> Result<(), io::Error> {
+    fs::create_dir(new_podcast_name)?;
+    let f_name = format!("{}/{}", new_podcast_name, const_globals::RSS_TEXT_FILE);
     fs::write(f_name, contents_url)?;
-    let f_name = format!("{}/{}", podcast_name, const_globals::INT_PREFIX_Y_N);
+    let f_name = format!("{}/{}", new_podcast_name, const_globals::INT_PREFIX_Y_N);
     fs::write(f_name, "")?;
     Ok(())
 }
 
-pub fn create_pod_dir(the_app: &mut app_ui::DownApp) -> Result<(), io::Error> {
+pub fn create_pod_dir(the_app: &mut app_state::DownApp) -> Result<(), io::Error> {
     the_app.ui_state = the_types::UiState::StateNoFocus;
-    create_new_podcast(&the_app.podcast_name, &the_app.podcast_url)?;
-    the_app.podcast_name = String::from("");
-    the_app.podcast_url = String::from("");
+    create_new_podcast(&the_app.new_podcast_name, &the_app.new_podcast_url)?;
+    the_app.new_podcast_name = String::from("");
+    the_app.new_podcast_url = String::from("");
     get_dirs_of_podcasts(the_app);
     Ok(())
 }
 
-pub fn podcasts_vscroll(console_frame: &mut Frame, draw_area: Rect, the_app: &mut app_ui::DownApp) {
+pub fn podcasts_vscroll(
+    console_frame: &mut Frame,
+    draw_area: Rect,
+    the_app: &mut app_state::DownApp,
+) {
     let area_safe = draw_area.intersection(console_frame.size());
     console_frame.render_stateful_widget(
         Scrollbar::new(ScrollbarOrientation::VerticalRight)
@@ -89,7 +93,7 @@ pub fn podcasts_vscroll(console_frame: &mut Frame, draw_area: Rect, the_app: &mu
     );
 }
 
-pub fn get_dirs_of_podcasts(the_app: &mut app_ui::DownApp) {
+pub fn get_dirs_of_podcasts(the_app: &mut app_state::DownApp) {
     let unordered_podcasts = read_podcast_dir(const_globals::ROOT_DIR);
     the_app.ordered_podcasts = <HashMap<String, String> as Clone>::clone(&unordered_podcasts)
         .into_iter()
@@ -103,7 +107,7 @@ pub fn get_dirs_of_podcasts(the_app: &mut app_ui::DownApp) {
 pub fn render_pod_list(
     console_frame: &mut Frame,
     draw_area: Rect,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     box_title: String,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
@@ -119,7 +123,7 @@ pub fn render_pod_list(
     let paragraph = Paragraph::new(colored_pod_rows.clone())
         .green()
         .block(create_block(box_title))
-        .scroll((the_app.scrolled_podcasts as u16, 0));
+        .scroll((the_app.scrolled_podcasts_pos as u16, 0));
     console_frame.render_widget(paragraph, area_safe);
 }
 

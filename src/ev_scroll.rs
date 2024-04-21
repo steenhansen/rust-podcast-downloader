@@ -1,13 +1,13 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::app_ui;
+use crate::app_state;
 use crate::area_rects;
 use crossterm::event::{MouseEvent, MouseEventKind};
 use ratatui::prelude::*;
 
 pub fn do_pod_scroll(
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     scroll_event: MouseEvent,
     console_frame: &mut Frame,
 ) -> () {
@@ -23,40 +23,40 @@ pub fn do_pod_scroll(
     }
 }
 
-fn scroll_podcasts(the_app: &mut app_ui::DownApp, scroll_event: MouseEvent) {
+fn scroll_podcasts(the_app: &mut app_state::DownApp, scroll_event: MouseEvent) {
     if scroll_event.kind == MouseEventKind::ScrollUp {
-        the_app.scrolled_podcasts = the_app.scrolled_podcasts.saturating_sub(1);
+        the_app.scrolled_podcasts_pos = the_app.scrolled_podcasts_pos.saturating_sub(1);
         the_app.state_scroll_podcasts = the_app
             .state_scroll_podcasts
-            .position(the_app.scrolled_podcasts);
+            .position(the_app.scrolled_podcasts_pos);
     }
     if scroll_event.kind == MouseEventKind::ScrollDown {
         let num_podcasts = the_app.ordered_podcasts.len();
-        let pod_scroll_pos = the_app.scrolled_podcasts;
+        let pod_scroll_pos = the_app.scrolled_podcasts_pos;
         if pod_scroll_pos + 1 < num_podcasts {
-            the_app.scrolled_podcasts = the_app.scrolled_podcasts.saturating_add(1);
+            the_app.scrolled_podcasts_pos = the_app.scrolled_podcasts_pos.saturating_add(1);
             the_app.state_scroll_podcasts = the_app
                 .state_scroll_podcasts
-                .position(the_app.scrolled_podcasts);
+                .position(the_app.scrolled_podcasts_pos);
         }
     }
 }
 
-fn scroll_episodes(the_app: &mut app_ui::DownApp, scroll_event: MouseEvent) {
+fn scroll_episodes(the_app: &mut app_state::DownApp, scroll_event: MouseEvent) {
     if scroll_event.kind == MouseEventKind::ScrollUp {
-        the_app.scrolled_episodes = the_app.scrolled_episodes.saturating_sub(1);
+        the_app.scrolled_episodes_pos = the_app.scrolled_episodes_pos.saturating_sub(1);
         the_app.state_scroll_episodes = the_app
             .state_scroll_episodes
-            .position(the_app.scrolled_episodes);
+            .position(the_app.scrolled_episodes_pos);
     }
     if scroll_event.kind == MouseEventKind::ScrollDown {
         let num_episodes = the_app.ordered_episodes.len();
-        let epi_scroll_pos = the_app.scrolled_episodes;
+        let epi_scroll_pos = the_app.scrolled_episodes_pos;
         if epi_scroll_pos + 1 < num_episodes {
-            the_app.scrolled_episodes = the_app.scrolled_episodes.saturating_add(1);
+            the_app.scrolled_episodes_pos = the_app.scrolled_episodes_pos.saturating_add(1);
             the_app.state_scroll_episodes = the_app
                 .state_scroll_episodes
-                .position(the_app.scrolled_episodes);
+                .position(the_app.scrolled_episodes_pos);
         }
     }
 }

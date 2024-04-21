@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::app_ui;
+use crate::app_state;
 use crate::area_rects;
 use crate::areas_consts;
 
@@ -16,15 +16,17 @@ use ratatui::prelude::*;
 
 pub fn do_click_mouse(
     the_frame: &mut Frame,
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     mouse_event: MouseEvent,
 ) -> bool {
     check_add(the_app, mouse_event);
+    check_all(the_app, mouse_event);
+    check_all_ok(the_app, mouse_event, the_frame);
     check_podcasts(the_app, mouse_event, the_frame);
     check_episodes(the_app, mouse_event, the_frame);
     check_resources(the_app, mouse_event);
-    check_prefix(the_app, mouse_event, the_frame);
-    check_popup(the_app, mouse_event, the_frame);
+    check_prefix(the_app, mouse_event);
+    check_error_ok(the_app, mouse_event, the_frame);
     let is_quit = check_quit(mouse_event, the_frame);
     is_quit
 }
@@ -39,7 +41,7 @@ fn check_quit(the_click: MouseEvent, the_frame: &mut Frame) -> bool {
     false
 }
 
-fn check_add(the_app: &mut app_ui::DownApp, the_click: MouseEvent) {
+fn check_add(the_app: &mut app_state::DownApp, the_click: MouseEvent) {
     let column = the_click.column;
     let row = the_click.row;
     if area_rects::point_in_rect(column, row, areas_consts::NEW_NAME_AREA) {
@@ -50,14 +52,52 @@ fn check_add(the_app: &mut app_ui::DownApp, the_click: MouseEvent) {
     }
 
     if area_rects::point_in_rect(column, row, areas_consts::ADD_PODCAST_AREA) {
-        if the_app.podcast_url.len() > 0 && the_app.podcast_name.len() > 0 {
+        if the_app.new_podcast_url.len() > 0 && the_app.new_podcast_name.len() > 0 {
             podcast_scroll::create_pod_dir(the_app).unwrap();
             the_app.ui_state = the_types::UiState::State003ClickedAdd;
         }
     }
 }
 
-fn check_resources(the_app: &mut app_ui::DownApp, the_click: MouseEvent) -> () {
+fn check_all(the_app: &mut app_state::DownApp, the_click: MouseEvent) {
+    let column = the_click.column;
+    let row = the_click.row;
+    if area_rects::point_in_rect(column, row, areas_consts::ALL_PODCAST_AREA) {
+        if the_app.selected_podcast.len() > 0 {
+            the_app.ui_state = the_types::UiState::State201AllEpisodes;
+        }
+    }
+}
+fn check_all_ok(
+    the_app: &mut app_state::DownApp,
+    the_click: MouseEvent,
+    the_frame: &mut Frame,
+) -> () {
+    if the_app.ui_state == the_types::UiState::State201AllEpisodes {
+        let column = the_click.column;
+        let row = the_click.row;
+        let error_close_area = area_rects::get_error_close_area(the_frame);
+        if area_rects::point_in_rect(column, row, error_close_area) {
+            the_app.ui_state = the_types::UiState::State202SureAllEpisodes;
+        }
+    }
+}
+fn check_error_ok(
+    the_app: &mut app_state::DownApp,
+    the_click: MouseEvent,
+    the_frame: &mut Frame,
+) -> () {
+    if the_app.ui_state == the_types::UiState::StateWaitForPopErrorClose {
+        let column = the_click.column;
+        let row = the_click.row;
+        let error_close_area = area_rects::get_error_close_area(the_frame);
+        if area_rects::point_in_rect(column, row, error_close_area) {
+            the_app.ui_state = the_types::UiState::StateNoFocus;
+        }
+    }
+}
+
+fn check_resources(the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
     let column = the_click.column;
     let row = the_click.row;
     if area_rects::point_in_rect(column, row, areas_consts::RADIO_AREA) {
@@ -68,7 +108,7 @@ fn check_resources(the_app: &mut app_ui::DownApp, the_click: MouseEvent) -> () {
 }
 
 fn check_podcasts(
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
@@ -81,7 +121,7 @@ fn check_podcasts(
 }
 
 fn check_episodes(
-    the_app: &mut app_ui::DownApp,
+    the_app: &mut app_state::DownApp,
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
@@ -93,35 +133,26 @@ fn check_episodes(
     }
 }
 
-fn check_prefix(the_app: &mut app_ui::DownApp, the_click: MouseEvent, the_frame: &mut Frame) -> () {
+fn check_prefix(the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
     let column = the_click.column;
     let row = the_click.row;
-    let prefix_area = area_rects::get_prefix_area(the_frame);
+    let prefix_area = areas_consts::PREFIX_AREA;
     if area_rects::point_in_rect(column, row, prefix_area) {
         podcast_scroll::flip_prefix(the_app).unwrap();
         podcast_files::get_epi_list(the_app).unwrap();
     }
 }
 
-fn check_popup(the_app: &mut app_ui::DownApp, the_click: MouseEvent, the_frame: &mut Frame) -> () {
-    let column = the_click.column;
-    let row = the_click.row;
-    let pop_close_area = area_rects::get_pop_close_area(the_frame);
-    if area_rects::point_in_rect(column, row, pop_close_area) {
-        the_app.ui_state = the_types::UiState::StateNoFocus;
-    }
-}
-
-fn podcast_click(the_app: &mut app_ui::DownApp, mouse_event: MouseEvent) -> () {
-    let scroll_offest_pod = the_app.scrolled_podcasts;
+fn podcast_click(the_app: &mut app_state::DownApp, mouse_event: MouseEvent) -> () {
+    let scroll_offest_pod = the_app.scrolled_podcasts_pos;
     let num_podcasts = the_app.ordered_podcasts.len();
     let is_o = misc_fun::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
     if !is_o {
         let row = mouse_event.row as usize;
         let m_ev_kind = mouse_event.kind;
         if left_click(m_ev_kind) {
-            let start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
-            let the_offset = scroll_offest_pod + row - start_y_podcast - 1;
+            let chunk_start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
+            let the_offset = scroll_offest_pod + row - chunk_start_y_podcast - 1;
             let the_choice = &the_app.ordered_podcasts[the_offset];
 
             the_app.selected_podcast = the_choice.to_string();
@@ -133,34 +164,35 @@ fn podcast_click(the_app: &mut app_ui::DownApp, mouse_event: MouseEvent) -> () {
     return;
 }
 
+fn episode_click(the_app: &mut app_state::DownApp, episode_click: MouseEvent) -> () {
+    let scroll_offest_epi = the_app.scrolled_episodes_pos;
+    let num_episodes = the_app.ordered_episodes.len();
+    let is_below_last = misc_fun::below_episodes(episode_click, scroll_offest_epi, num_episodes);
+    if !is_below_last {
+        let current_row = episode_click.row as usize;
+        let m_ev_kind = episode_click.kind;
+        if left_click(m_ev_kind) {
+            let chunk_start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
+            let the_offset = scroll_offest_epi + current_row - chunk_start_y_podcast - 1;
+            let the_choice = &the_app.ordered_episodes[the_offset];
+            let sel_podcast = the_app.selected_podcast.to_string();
+            let sel_episode = the_choice.to_string();
+            let url_episode = the_app.episode_2_url[the_choice].to_string();
+            if !the_app.local_episode_files.contains_key(&sel_episode) {
+                episode_threads::queue_episode_download(
+                    the_app,
+                    sel_podcast,
+                    sel_episode,
+                    url_episode,
+                );
+            }
+        }
+    }
+}
+
 fn left_click(kind_click: MouseEventKind) -> bool {
     if kind_click == MouseEventKind::Down(Left) || kind_click == MouseEventKind::Up(Left) {
         return true;
     }
     false
-}
-
-fn episode_click(the_app: &mut app_ui::DownApp, episode_click: MouseEvent) -> () {
-    let scroll_offest_epi = the_app.scrolled_episodes;
-    let num_episodes = the_app.ordered_episodes.len();
-    let is_o = misc_fun::below_episodes(episode_click, scroll_offest_epi, num_episodes);
-    if !is_o {
-        let row = episode_click.row as usize;
-        let m_ev_kind = episode_click.kind;
-        if left_click(m_ev_kind) {
-            let start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
-            let the_offset = scroll_offest_epi + row - start_y_podcast - 1;
-            let the_choice = &the_app.ordered_episodes[the_offset];
-
-            the_app.selected_episode = the_choice.to_string();
-
-            let sel_podcast = the_app.selected_podcast.to_string();
-            let sel_episode = the_choice.to_string();
-            let url_episode = the_app.episode_2_url[the_choice].to_string();
-            episode_threads::spawn_getter(sel_podcast, sel_episode, url_episode);
-            return;
-        }
-    }
-    the_app.selected_episode = "-episode-click-outside-".to_string();
-    return;
 }

@@ -41,6 +41,7 @@ pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
             Root::builder()
                 .appender("logfile")
                 .appender("stderr")
+                //.build(LevelFilter::Warn),
                 .build(LevelFilter::Trace),
         )
         .unwrap();
@@ -48,10 +49,6 @@ pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
     _handle
 }
 
-pub fn trace_off() {
-    log::set_max_level(LevelFilter::Error); // warn
-}
-
-pub fn trace_on() {
-    log::set_max_level(LevelFilter::Trace);
+pub fn reqwest_trace_off(level_filter: LevelFilter) {
+    log::set_max_level(level_filter);
 }
