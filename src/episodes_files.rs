@@ -38,7 +38,7 @@ pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
                     {
                         let k_real_file = String::from(real_file_str);
                         let v_real_file = String::from(real_file_str);
-                        // warn!("epi_filter v_real_file {:?}", v_real_file);
+                        //  warn!("epi_filter v_real_file {:?}", v_real_file);
                         local_episodes.insert(k_real_file, v_real_file);
                     }
                 }
@@ -79,7 +79,7 @@ pub fn read_file(
     sel_podcast: String,
     file_name: String,
     url_episode: String,
-) -> Result<(), Box<dyn error::Error>> {
+) -> Result<bool, Box<dyn error::Error>> {
     let len_media = media_length(&url_episode);
     let file_size = match len_media {
         Ok(len_media) => len_media,
@@ -87,10 +87,13 @@ pub fn read_file(
     };
     let client = reqwest::blocking::Client::new();
     let local_file = format!("{}/{}", sel_podcast, file_name);
+    //warn!("read_file {:?}", local_file);
+    warn!(" read_file {:?}", local_file);
     g_current_active::change_status(&local_file, 0);
     let chunk_size = const_globals::CHUNK_SIZE;
-    let _ = media_chunked(file_size, chunk_size, client, url_episode, local_file);
-    Ok(())
+    let finished_downloading =
+        media_chunked(file_size, chunk_size, client, url_episode, local_file)?;
+    Ok(finished_downloading)
 }
 
 // https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html#make-a-partial-download-with-http-range-headers
@@ -100,7 +103,7 @@ pub fn media_chunked(
     client: Client,
     url_episode: String,
     local_file: String,
-) -> Result<(), Box<dyn error::Error>> {
+) -> Result<bool, Box<dyn error::Error>> {
     let working_file = local_file.clone() + const_globals::WORKING_FILE;
     let mut output_file = match File::create(&working_file) {
         Ok(output_file) => output_file,
@@ -124,9 +127,11 @@ pub fn media_chunked(
         }
         std::io::copy(&mut response_chunk, &mut output_file)?;
     }
+    output_file.sync_all()?;
     fs::rename(working_file, &local_file)?;
-    g_current_active::remove_status(&local_file);
-    Ok(())
+
+    let finished_downloading = g_current_active::remove_status(&local_file);
+    Ok(finished_downloading)
 }
 
 fn speed_sleep() {

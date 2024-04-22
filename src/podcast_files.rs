@@ -72,14 +72,14 @@ pub fn get_epi_list(the_app: &mut app_state::DownApp) -> Result<(), Box<dyn erro
     let an_string = match read_rss(&rss_feed) {
         Ok(an_string) => an_string,
         Err(_e) => {
-            let bad_url_err = format!("Error - {:?} is not valid URL", &rss_feed);
+            let bad_url_err = format!("\n Error - {:?} is not valid URL", &rss_feed);
             return Err(bad_url_err.into());
         }
     };
     let neg_titles_urls = match rss_xml::dirty_titles_urls(an_string) {
         Ok(v) => v,
         Err(_e) => {
-            let bad_xml_err = format!("Error - {:?} is not valid XML", &rss_feed);
+            let bad_xml_err = format!("\n Error - {:?} is not valid XML", &rss_feed);
             return Err(bad_xml_err.into());
         }
     };

@@ -2,7 +2,7 @@
 use log::{debug, info, trace, warn};
 
 use crate::app_state;
-
+use crate::g_current_active;
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
 use ratatui::style::Stylize;
@@ -105,8 +105,29 @@ pub fn render_all_podcast(
 }
 
 fn can_do_all(the_app: &mut app_state::DownApp) -> bool {
+    //   warn!("------------------------------------------------");
+    let just_dones = g_current_active::just_done(the_app.selected_podcast.clone());
+    // warn!(" just_dones {:?}", just_dones);
+
+    // warn!(
+    //     " the_app.selected_podcast.len() {:?}",
+    //     the_app.selected_podcast.len()
+    // );
+    // warn!(
+    //     " _current_active::active_downloading() {:?}",
+    //     g_current_active::active_downloading()
+    // );
+    // warn!(
+    //     " the_app.local_episode_files.len() {:?}",
+    //     the_app.local_episode_files.len()
+    // );
+    // warn!(
+    //     " the_app.episode_2_url.len() {:?}",
+    //     the_app.episode_2_url.len()
+    // );
     if the_app.selected_podcast.len() > 0
-        && (the_app.local_episode_files.len() != the_app.episode_2_url.len())
+        && g_current_active::active_downloading() == 0
+        && (the_app.local_episode_files.len() + just_dones != the_app.episode_2_url.len())
     {
         return true;
     }

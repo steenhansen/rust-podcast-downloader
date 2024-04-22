@@ -4,8 +4,8 @@ use log::{debug, info, trace, warn};
 use crate::app_state;
 use crate::area_rects;
 use crate::areas_consts;
-
 use crate::episode_threads;
+use crate::g_current_active;
 use crate::g_resource_speed;
 use crate::misc_fun;
 use crate::podcast_files;
@@ -157,6 +157,7 @@ fn podcast_click(the_app: &mut app_state::DownApp, mouse_event: MouseEvent) -> (
 
             the_app.selected_podcast = the_choice.to_string();
             the_app.ui_state = the_types::UiState::State101ReadingRss;
+            g_current_active::new_pod_clear();
             return;
         }
     }

@@ -39,7 +39,7 @@ pub fn get_error_close_area(console_frame: &mut Frame) -> Rect {
 
     let mut close_err_area = area;
     close_err_area.x = close_err_area.x + (close_err_area.width / 2) - 2;
-    close_err_area.y = close_err_area.y + (close_err_area.height / 2) - 1 + 1;
+    close_err_area.y = close_err_area.y + (close_err_area.height / 2) - 1 + 2;
     close_err_area.width = 5;
     close_err_area.height = 3;
     close_err_area

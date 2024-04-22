@@ -144,6 +144,9 @@ fn show_quit(console_frame: &mut Frame) {
 fn show_status(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     let status_area = area_rects::get_status_area(console_frame);
     let num_downloading = g_current_active::active_downloading();
+    if num_downloading == 0 {
+        //the_app.ui_state = the_types::UiState::State203DownloadedAll;
+    }
     let num_waiting = the_app.download_deque.len();
     let stat_mess = format!(
         " Active Downloading Files {:?}, Waiting {:?}",

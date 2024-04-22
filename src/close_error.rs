@@ -18,8 +18,16 @@ pub fn render_all_ok(console_frame: &mut Frame, the_app: &app_state::DownApp) {
             }
         }
         let bytes_commas = download_bytes.separate_with_commas();
-        let all_mess =
-            "\n Are you sure? There are ".to_owned() + &bytes_commas + " bytes to download.";
+        let all_mess: String;
+        if bytes_commas == "0" {
+            all_mess =
+                "\n Are you sure? There are an unknown number of bytes to download.".to_string();
+        } else {
+            all_mess = format!(
+                "\n Are you sure? There are {:?} bytes to download.",
+                &bytes_commas
+            );
+        }
         draw_close_all(console_frame, all_mess);
     }
 }
@@ -40,7 +48,7 @@ pub fn draw_close_all(console_frame: &mut Frame, a_message: String) {
         .style(Style::default().fg(Color::Gray))
         .block(create_block("Download all episodes in this podcast"));
 
-    let area = area_rects::centered_rect(60, 25, area);
+    let area = area_rects::centered_rect(60, 31, area);
     console_frame.render_widget(Clear, area);
     console_frame.render_widget(paragraph, area);
     let pop_close_area = area_rects::get_error_close_area(console_frame);
@@ -58,7 +66,7 @@ pub fn draw_close_popup(console_frame: &mut Frame, a_message: String) {
     let paragraph = Paragraph::new(a_message)
         .style(Style::default().fg(Color::Gray))
         .block(create_block("My Error"));
-    let area = area_rects::centered_rect(60, 20, area);
+    let area = area_rects::centered_rect(60, 30, area);
     console_frame.render_widget(Clear, area);
     console_frame.render_widget(paragraph, area);
     let pop_close_area = area_rects::get_error_close_area(console_frame);
