@@ -73,7 +73,6 @@ fn run_app<B: Backend>(
             }
         }
         ev_after_draw::after_ui(&mut the_app);
-        // warn!("main after dawr");
         episode_threads::check_start_down(&mut the_app);
         if last_tick.elapsed() >= tick_rate {
             last_tick = Instant::now();

@@ -17,22 +17,33 @@ use crate::the_types;
 use log::{debug, info, trace, warn};
 use ratatui::prelude::*;
 
+fn dim_background(the_app: &app_state::DownApp) -> bool {
+    let ui_state = the_app.ui_state;
+    if ui_state == the_types::UiState::State101ReadingRss
+        || ui_state == the_types::UiState::State102ShowWaiting
+        || ui_state == the_types::UiState::State201AllEpisodes
+        || ui_state == the_types::UiState::State202SureAllEpisodes
+        || ui_state == the_types::UiState::State301WaitForPopErrorClose
+    {
+        return true;
+    }
+    false
+}
+
 #[allow(clippy::too_many_lines, clippy::cast_possible_truncation)]
 pub fn draw_ui(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+    let dim_background = dim_background(the_app);
     show_title(console_frame, the_app);
-    show_add(console_frame, the_app);
-    show_resources(console_frame, the_app);
+    show_add(console_frame, the_app, dim_background);
+    show_resources(console_frame, the_app, dim_background);
     show_quit(console_frame);
-    show_podcasts(console_frame, the_app);
+    show_podcasts(console_frame, the_app, dim_background);
     show_episodes(console_frame, the_app);
     show_status(console_frame, the_app);
-    show_prefix(console_frame, the_app);
+    show_prefix(console_frame, the_app, dim_background);
 
     close_error::render_error_close(console_frame, the_app);
     close_error::render_all_ok(console_frame, the_app);
-    // if the_app.state_scroll_podcasts {
-    //   warn!(" app ui_state {:?}", the_app.ui_state);
-    //}
 }
 
 fn show_title(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
@@ -44,7 +55,7 @@ fn show_title(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     );
 }
 
-fn show_add(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+fn show_add(console_frame: &mut Frame, the_app: &mut app_state::DownApp, dim_background: bool) {
     render_add::render_url(
         console_frame,
         areas_consts::NEW_URL_AREA,
@@ -61,26 +72,33 @@ fn show_add(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
         console_frame,
         areas_consts::ADD_PODCAST_AREA,
         the_app,
-        " Add Podcast",
+        "\n Add Podcast",
+        dim_background,
     );
 
     render_add::render_all_podcast(
         console_frame,
         areas_consts::ALL_PODCAST_AREA,
         the_app,
-        " Download All Episodes",
+        "\n Download All Episodes",
+        dim_background,
     );
 }
 
-fn show_resources(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+fn show_resources(
+    console_frame: &mut Frame,
+    the_app: &mut app_state::DownApp,
+    dim_background: bool,
+) {
     render_speed::render_resources(
         console_frame,
         areas_consts::RADIO_AREA,
         the_app,
         "Internet Resource Load",
+        dim_background,
     );
 }
-fn show_prefix(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+fn show_prefix(console_frame: &mut Frame, the_app: &mut app_state::DownApp, dim_background: bool) {
     if the_app.selected_podcast != "" {
         let is_in_prefix =
             podcast_scroll::is_int_prefix(const_globals::ROOT_DIR, &the_app.selected_podcast);
@@ -91,6 +109,7 @@ fn show_prefix(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
                 prefix_area,
                 the_app,
                 "[✓] Names Integer Prefixed",
+                dim_background,
             );
         } else {
             render_speed::render_prefix(
@@ -98,18 +117,24 @@ fn show_prefix(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
                 prefix_area,
                 the_app,
                 "[ ] Names Integer Prefixed",
+                dim_background,
             );
         }
     }
 }
 
-fn show_podcasts(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
+fn show_podcasts(
+    console_frame: &mut Frame,
+    the_app: &mut app_state::DownApp,
+    dim_background: bool,
+) {
     let elastic_pod_area = area_rects::get_podcast_area(console_frame);
     podcast_scroll::render_pod_list(
         console_frame,
         elastic_pod_area,
         the_app,
         String::from("Choose Podcast to Download"),
+        dim_background,
     );
     podcast_scroll::podcasts_vscroll(console_frame, elastic_pod_area, the_app);
 }
@@ -144,9 +169,6 @@ fn show_quit(console_frame: &mut Frame) {
 fn show_status(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
     let status_area = area_rects::get_status_area(console_frame);
     let num_downloading = g_current_active::active_downloading();
-    if num_downloading == 0 {
-        //the_app.ui_state = the_types::UiState::State203DownloadedAll;
-    }
     let num_waiting = the_app.download_deque.len();
     let stat_mess = format!(
         " Active Downloading Files {:?}, Waiting {:?}",

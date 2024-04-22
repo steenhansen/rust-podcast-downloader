@@ -3,7 +3,6 @@ use log::{debug, info, trace, warn};
 
 use reqwest::header::HeaderValue;
 
-//https://doc.rust-lang.org/rust-by-example/trait/iter.html
 pub struct ChunkRangeIter {
     chunk_start: u64,
     chunk_end: u64,

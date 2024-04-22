@@ -19,14 +19,22 @@ pub fn do_click_mouse(
     the_app: &mut app_state::DownApp,
     mouse_event: MouseEvent,
 ) -> bool {
-    check_add(the_app, mouse_event);
-    check_all(the_app, mouse_event);
-    check_all_ok(the_app, mouse_event, the_frame);
-    check_podcasts(the_app, mouse_event, the_frame);
-    check_episodes(the_app, mouse_event, the_frame);
-    check_resources(the_app, mouse_event);
-    check_prefix(the_app, mouse_event);
+    if the_app.ui_state != the_types::UiState::State101ReadingRss
+        && the_app.ui_state != the_types::UiState::State102ShowWaiting
+        && the_app.ui_state != the_types::UiState::State201AllEpisodes
+        && the_app.ui_state != the_types::UiState::State202SureAllEpisodes
+        && the_app.ui_state != the_types::UiState::State301WaitForPopErrorClose
+    {
+        check_add(the_app, mouse_event);
+        check_all(the_app, mouse_event);
+        check_podcasts(the_app, mouse_event, the_frame);
+        check_episodes(the_app, mouse_event, the_frame);
+        check_resources(the_app, mouse_event);
+        check_prefix(the_app, mouse_event);
+    }
     check_error_ok(the_app, mouse_event, the_frame);
+    check_all_ok(the_app, mouse_event, the_frame);
+
     let is_quit = check_quit(mouse_event, the_frame);
     is_quit
 }
@@ -68,6 +76,7 @@ fn check_all(the_app: &mut app_state::DownApp, the_click: MouseEvent) {
         }
     }
 }
+
 fn check_all_ok(
     the_app: &mut app_state::DownApp,
     the_click: MouseEvent,
@@ -87,7 +96,7 @@ fn check_error_ok(
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
-    if the_app.ui_state == the_types::UiState::StateWaitForPopErrorClose {
+    if the_app.ui_state == the_types::UiState::State301WaitForPopErrorClose {
         let column = the_click.column;
         let row = the_click.row;
         let error_close_area = area_rects::get_error_close_area(the_frame);

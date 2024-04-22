@@ -5,7 +5,6 @@ use crate::{app_state, const_globals};
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
-use ratatui::style::Stylize;
 
 use ratatui::{prelude::*, widgets::*};
 
@@ -14,9 +13,17 @@ pub fn render_prefix(
     draw_area: Rect,
     _the_app: &mut app_state::DownApp,
     box_title: &str,
+    dim_background: bool,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let title = Block::new().title(box_title.bold().white());
+    let resource_text_color;
+    if dim_background {
+        resource_text_color = const_globals::DIMMED_BACKGROUND_WAIT;
+    } else {
+        resource_text_color = const_globals::NORMAL_TEXT_COL;
+    }
+    let box_style = Style::default().fg(resource_text_color);
+    let title = Block::new().title(box_title).style(box_style);
     console_frame.render_widget(title, area_safe);
 }
 
@@ -25,9 +32,16 @@ pub fn render_resources(
     draw_area: Rect,
     the_app: &mut app_state::DownApp,
     box_title: &str,
+    dim_background: bool,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let box_style = Style::new().white().on_black();
+    let resource_text_color;
+    if dim_background {
+        resource_text_color = const_globals::DIMMED_BACKGROUND_WAIT;
+    } else {
+        resource_text_color = const_globals::NORMAL_TEXT_COL;
+    }
+    let box_style = Style::default().fg(resource_text_color);
 
     let fast_radio = match the_app.fast_med_slow == 0 {
         true => "[X] ",

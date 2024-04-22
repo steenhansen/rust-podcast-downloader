@@ -15,7 +15,6 @@ use std::error;
 use std::fs;
 
 pub fn erase_working(the_app: &mut app_state::DownApp) {
-    // std::io::Result<()> {
     let rss_dir = format!("./{}", the_app.selected_podcast);
     if !the_app.init_erased_dirs.contains_key(&rss_dir) {
         let dir_entries = fs::read_dir(&rss_dir).unwrap();

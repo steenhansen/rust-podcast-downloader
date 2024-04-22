@@ -11,20 +11,23 @@ use crossterm::event::KeyEvent;
 use crossterm::execute;
 use std::io::stdout;
 
-pub fn do_event_key(the_app: &mut app_state::DownApp, key_event: KeyEvent) -> () {
+pub fn do_event_key(the_app: &mut app_state::DownApp, key_event: KeyEvent) {
     let the_code = key_event.code;
     if the_code == KeyCode::Tab {
         the_app.ui_state = the_types::UiState::State002NewPodcastName;
     }
-    match the_app.ui_state {
-        the_types::UiState::State001NewPodcastUrl => {
-            the_app.new_podcast_url = edit_text(&the_app.new_podcast_url, the_code);
+
+    if the_app.ui_state == the_types::UiState::State001NewPodcastUrl {
+        the_app.new_podcast_url = edit_text(&the_app.new_podcast_url, the_code);
+    } else if the_app.ui_state == the_types::UiState::State002NewPodcastName {
+        the_app.new_podcast_name = edit_text(&the_app.new_podcast_name, the_code);
+    } else {
+        if the_code == KeyCode::Up {
+            the_app.scrolled_episodes_pos = the_app.scrolled_episodes_pos.saturating_sub(1);
+        } else if the_code == KeyCode::Down {
+            the_app.scrolled_episodes_pos = the_app.scrolled_episodes_pos.saturating_add(1);
         }
-        the_types::UiState::State002NewPodcastName => {
-            the_app.new_podcast_name = edit_text(&the_app.new_podcast_name, the_code);
-        }
-        _ => (),
-    };
+    }
 }
 
 pub fn edit_text(ed_text: &String, the_code: KeyCode) -> String {

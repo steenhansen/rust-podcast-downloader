@@ -2,12 +2,12 @@
 use log::{debug, info, trace, warn};
 
 use crate::app_state;
+use crate::const_globals;
 use crate::g_current_active;
+use crate::the_types;
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
 use ratatui::style::Stylize;
-
-use crate::the_types;
 use ratatui::{prelude::*, widgets::*};
 
 use std::str;
@@ -76,15 +76,28 @@ pub fn render_add_podcast(
     draw_area: Rect,
     the_app: &mut app_state::DownApp,
     box_title: &str,
+    dim_background: bool,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let create_block = |title: &'static str| Block::new().gray().title(title.bold());
-    let paragraph = Paragraph::new(box_title).white().block(create_block(""));
-    if the_app.new_podcast_url.len() > 0 && the_app.new_podcast_name.len() > 0 {
-        console_frame.render_widget(paragraph.on_green(), area_safe);
+
+    let add_text_color;
+    let add_background_color;
+
+    if the_app.new_podcast_url.len() > 0 && the_app.new_podcast_name.len() > 0 && !dim_background {
+        add_text_color = const_globals::NORMAL_TEXT_COL;
+        add_background_color = const_globals::BUTTON_READY;
     } else {
-        console_frame.render_widget(paragraph.on_dark_gray(), area_safe);
+        add_text_color = const_globals::DIMMED_BUTTON_TEXT;
+        add_background_color = const_globals::DIMMED_BACKGROUND_WAIT;
     }
+    let text_style = Style::default().fg(add_text_color);
+    let background_style = Style::default().bg(add_background_color);
+
+    let paragraph = Paragraph::new(box_title)
+        .style(background_style)
+        .block(Block::new().style(text_style));
+
+    console_frame.render_widget(paragraph, area_safe);
 }
 
 pub fn render_all_podcast(
@@ -92,39 +105,30 @@ pub fn render_all_podcast(
     draw_area: Rect,
     the_app: &mut app_state::DownApp,
     box_title: &str,
+    dim_background: bool,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let create_block = |title: &'static str| Block::new().gray().title(title.bold());
-    let paragraph = Paragraph::new(box_title).white().block(create_block(""));
-
-    if can_do_all(the_app) {
-        console_frame.render_widget(paragraph.on_green(), area_safe);
+    let all_text_color;
+    let all_background_color;
+    if dim_background || !can_do_all(the_app) {
+        all_text_color = const_globals::DIMMED_BUTTON_TEXT;
+        all_background_color = const_globals::DIMMED_BACKGROUND_WAIT;
     } else {
-        console_frame.render_widget(paragraph.on_dark_gray(), area_safe);
+        all_text_color = const_globals::NORMAL_TEXT_COL;
+        all_background_color = const_globals::BUTTON_READY;
     }
+    let text_style = Style::default().fg(all_text_color);
+    let background_style = Style::default().bg(all_background_color);
+
+    let paragraph = Paragraph::new(box_title)
+        .style(background_style)
+        .block(Block::new().style(text_style));
+
+    console_frame.render_widget(paragraph, area_safe);
 }
 
 fn can_do_all(the_app: &mut app_state::DownApp) -> bool {
-    //   warn!("------------------------------------------------");
     let just_dones = g_current_active::just_done(the_app.selected_podcast.clone());
-    // warn!(" just_dones {:?}", just_dones);
-
-    // warn!(
-    //     " the_app.selected_podcast.len() {:?}",
-    //     the_app.selected_podcast.len()
-    // );
-    // warn!(
-    //     " _current_active::active_downloading() {:?}",
-    //     g_current_active::active_downloading()
-    // );
-    // warn!(
-    //     " the_app.local_episode_files.len() {:?}",
-    //     the_app.local_episode_files.len()
-    // );
-    // warn!(
-    //     " the_app.episode_2_url.len() {:?}",
-    //     the_app.episode_2_url.len()
-    // );
     if the_app.selected_podcast.len() > 0
         && g_current_active::active_downloading() == 0
         && (the_app.local_episode_files.len() + just_dones != the_app.episode_2_url.len())

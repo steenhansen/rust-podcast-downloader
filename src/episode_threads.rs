@@ -1,5 +1,3 @@
-//   https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html?highlight=chunk#make-a-partial-download-with-http-range-headers
-
 use crate::app_state;
 use crate::const_globals;
 use crate::episodes_files;
@@ -17,8 +15,6 @@ pub fn queue_episode_download(
 ) {
     let local_file = format!("{}/{}", sel_podcast, media_fname);
     if !g_current_active::is_in(local_file.clone()) {
-        warn!(" quei {:?}", local_file);
-        // g_current_active::change_status(&local_file, 0);
         the_app
             .download_deque
             .push_back((sel_podcast, media_fname, url_episode));
@@ -36,7 +32,6 @@ fn spawn_it(sel_podcast: String, media_fname: String, url_episode: String) {
 }
 
 pub fn check_start_down(the_app: &mut app_state::DownApp) {
-    //warn!("check_start_dwon");
     let active_downs = g_current_active::active_downloading();
     let cur_speed = g_resource_speed::get_speed();
     let max_cur_downs: usize = match cur_speed {

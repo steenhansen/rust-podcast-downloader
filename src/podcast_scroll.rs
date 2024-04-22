@@ -109,19 +109,20 @@ pub fn render_pod_list(
     draw_area: Rect,
     the_app: &mut app_state::DownApp,
     box_title: String,
+    dim_background: bool,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
 
     let ordered_podcasts = the_app.ordered_podcasts.clone();
     let selected_podcast = the_app.selected_podcast.clone();
-    let colored_pod_rows: Vec<Line> = colored_podcasts(ordered_podcasts, selected_podcast);
+    let colored_pod_rows: Vec<Line> =
+        colored_podcasts(ordered_podcasts, selected_podcast, dim_background);
     the_app.state_scroll_podcasts = the_app
         .state_scroll_podcasts
         .content_length(colored_pod_rows.len());
 
     let create_block = |title: String| Block::bordered().gray().title(title.bold());
     let paragraph = Paragraph::new(colored_pod_rows.clone())
-        .green()
         .block(create_block(box_title))
         .scroll((the_app.scrolled_podcasts_pos as u16, 0));
     console_frame.render_widget(paragraph, area_safe);
@@ -130,15 +131,20 @@ pub fn render_pod_list(
 pub fn colored_podcasts(
     ordered_podcastsed: Vec<String>,
     selected_podcast: String,
+    dim_background: bool,
 ) -> Vec<Line<'static>> {
     let text: Vec<Line> = ordered_podcastsed
         .into_iter()
-        .map(|p_name| {
-            if p_name == selected_podcast {
-                Line::from(p_name.red())
+        .map(|podcast_name| {
+            let podcast_text_color;
+            if dim_background {
+                podcast_text_color = const_globals::DIMMED_BACKGROUND_WAIT;
+            } else if podcast_name == selected_podcast {
+                podcast_text_color = const_globals::PODCAST_SELECTED;
             } else {
-                Line::from(p_name)
+                podcast_text_color = const_globals::PODCAST_NOT_SELECTED;
             }
+            Line::styled(podcast_name, Style::default().fg(podcast_text_color))
         })
         .collect();
 

@@ -21,19 +21,17 @@ pub enum UiState {
     #[strum(to_string = "State104UpdatedEpisodes")]
     State104UpdatedEpisodes,
 
-    #[strum(to_string = "StateWaitForPopErrorClose")]
-    StateWaitForPopErrorClose,
-
     #[strum(to_string = "State201AllEpisodes")]
     State201AllEpisodes,
     #[strum(to_string = "State202SureAllEpisodes")]
     State202SureAllEpisodes,
-
     #[strum(to_string = "State203DownloadedingAll")]
     State203DownloadedingAll,
-
     #[strum(to_string = "State204AfterAll")]
     State204AfterAll,
+
+    #[strum(to_string = "State301WaitForPopErrorClose")]
+    State301WaitForPopErrorClose,
 
     #[strum(to_string = "StateLocalFiles")]
     StateLocalFiles,

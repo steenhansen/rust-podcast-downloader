@@ -55,7 +55,7 @@ pub fn draw_close_all(console_frame: &mut Frame, a_message: String) {
     render_misc::render_close(console_frame, pop_close_area, "Ok");
 }
 pub fn render_error_close(console_frame: &mut Frame, the_app: &mut app_state::DownApp) {
-    if the_app.ui_state == the_types::UiState::StateWaitForPopErrorClose {
+    if the_app.ui_state == the_types::UiState::State301WaitForPopErrorClose {
         let the_err_mess = the_app.cur_error.clone();
         draw_close_popup(console_frame, the_err_mess);
     }

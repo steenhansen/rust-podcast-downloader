@@ -36,7 +36,6 @@ pub fn render_epi_list(
     let colored_epi_rows: Vec<Line> =
         colored_episodes(ordered_episodes, local_episode_files, the_app);
     let episode_title = format!("{}——{}", the_app.selected_podcast, box_title);
-    ////////////
     let area_safe = draw_area.intersection(console_frame.size());
     the_app.state_scroll_podcasts = the_app
         .state_scroll_podcasts
@@ -57,7 +56,6 @@ pub fn render_epi_list_empty(
 ) {
     let episode_title = format!("{}", the_app.selected_podcast);
     let colored_epi_rows: Vec<Line> = [Line::from("loading...".red())].to_vec();
-    //////////
     let area_safe = draw_area.intersection(console_frame.size());
     the_app.state_scroll_podcasts = the_app
         .state_scroll_podcasts
@@ -88,7 +86,9 @@ fn colored_episodes(
                 let old_local_file = color_old_epi(&episode_name);
                 return Line::from(old_local_file);
             } else {
-                let cur_read_status = g_current_active::G_CURRENT_ACTIVE.lock().unwrap();
+                let cur_read_status = g_current_active::G_CURRENT_ACTIVE
+                    .lock()
+                    .expect("memory err");
                 let full_epi_name = format!("{selected_podcast}/{episode_name}");
                 match cur_read_status.get(&full_epi_name) {
                     Some(num_bytes) => {
@@ -134,7 +134,7 @@ fn possible_or_waiting(
 }
 
 fn color_old_epi(episode_name: &str) -> Span<'static> {
-    let indented_old = "   ".to_owned() + episode_name;
+    let indented_old = const_globals::FINISHED_INDENT.to_owned() + episode_name;
     let old_local_file = Span::styled(
         indented_old,
         Style::default().fg(const_globals::OLD_LOCAL_EPISODE),
@@ -143,7 +143,7 @@ fn color_old_epi(episode_name: &str) -> Span<'static> {
 }
 
 fn color_finished_epi(episode_name: &str) -> Span<'static> {
-    let just_finished = "   ".to_owned() + episode_name;
+    let just_finished = const_globals::FINISHED_INDENT.to_owned() + episode_name;
     let new_local_file = Span::styled(
         just_finished,
         Style::default().fg(const_globals::JUST_GOT_EPISODE),
@@ -152,7 +152,7 @@ fn color_finished_epi(episode_name: &str) -> Span<'static> {
 }
 
 fn color_start_epi(episode_name: &str) -> Span<'static> {
-    let new_f_pos = "0000000 - ".to_owned() + episode_name;
+    let new_f_pos = const_globals::ZERO_START_INDENT.to_owned() + episode_name;
     let new_local_file = Span::styled(
         new_f_pos,
         Style::default()

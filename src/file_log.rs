@@ -1,6 +1,4 @@
-//  log::debug !("pod_name :::: {:?}", pod_name);
-
-//  https://github.com/estk/log4rs/blob/main/examples/log_to_file.rs
+//  warn!(" my_var == {:?}", my_var);
 
 use log::{LevelFilter, SetLoggerError};
 use log4rs::{

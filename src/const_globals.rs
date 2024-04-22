@@ -45,3 +45,16 @@ pub const CHUNK_TIMEOUT: Duration = Duration::from_secs(100);
 pub const CHUNK_SIZE: u32 = 1_000_000;
 
 pub const RSS_SOME_TIMEOUT: Option<Duration> = Some(Duration::from_secs(100));
+
+pub const PODCAST_SELECTED: Color = Color::Red;
+pub const PODCAST_NOT_SELECTED: Color = Color::Green;
+
+pub const DIMMED_BACKGROUND_WAIT: Color = Color::DarkGray;
+
+pub const BUTTON_READY: Color = Color::Green;
+
+pub const DIMMED_BUTTON_TEXT: Color = Color::Black;
+pub const NORMAL_TEXT_COL: Color = Color::White;
+
+pub const FINISHED_INDENT: &str = "   ";
+pub const ZERO_START_INDENT: &str = "0000000 - ";

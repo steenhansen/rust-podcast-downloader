@@ -13,19 +13,13 @@ pub static G_CURRENT_ACTIVE: Lazy<Mutex<HashMap<String, String>>> = Lazy::new(||
 });
 
 pub fn new_pod_clear() {
-    //   warn!("remove remove_status  {:?}", local_file);
     G_CURRENT_ACTIVE.lock().unwrap().clear();
 }
 
 pub fn just_done(selected_podcast: String) -> usize {
-    //warn!("remoactive_downloading ");
     let number_just_done = G_CURRENT_ACTIVE.lock().unwrap().clone();
     let mut fini = 0;
     for (_file, num) in number_just_done {
-        // warn!(
-        //     "just_done _file ==={:?} JJJJ {:?} iii {:?}",
-        //     _file, num, selected_podcast
-        // );
         if _file.starts_with(&selected_podcast) {
             if num == const_globals::DOWNLOADED_MEDIA {
                 fini += 1;
@@ -36,11 +30,9 @@ pub fn just_done(selected_podcast: String) -> usize {
 }
 
 pub fn active_downloading() -> usize {
-    //warn!("remoactive_downloading ");
     let number_downing = G_CURRENT_ACTIVE.lock().unwrap().clone();
     let mut actives = 0;
     for (_file, num) in number_downing {
-        //  warn!("remoactive_downloading _file ==={:?} JJJJ {:?}", _file, num);
         if num != const_globals::DOWNLOADED_MEDIA {
             actives += 1;
         }
@@ -49,7 +41,6 @@ pub fn active_downloading() -> usize {
 }
 
 pub fn remove_status(local_file: &String) -> bool {
-    //   warn!("remove remove_status  {:?}", local_file);
     G_CURRENT_ACTIVE.lock().unwrap().insert(
         local_file.clone(),
         const_globals::DOWNLOADED_MEDIA.to_string(),
@@ -60,10 +51,6 @@ pub fn remove_status(local_file: &String) -> bool {
 }
 
 pub fn change_status(local_file: &String, byte_count: u32) {
-    // warn!(
-    //     "CCCCCCCCCCCCCc change_status  {:?} - {:?}",
-    //     local_file, byte_count
-    // );
     G_CURRENT_ACTIVE
         .lock()
         .unwrap()

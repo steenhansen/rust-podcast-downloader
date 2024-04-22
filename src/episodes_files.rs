@@ -20,14 +20,11 @@ use std::thread;
 use std::time::Duration;
 
 pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
-    // pub fn read_episode_dir(
-    //     selected_podcast: &str,
-    // ) -> Result<HashMap<String, String>, Box<dyn error::Error>> {
     let episodes_dir = format!("{}{}", "./", selected_podcast);
     let mut local_episodes: HashMap<String, String> = HashMap::new();
     let dir_entries = fs::read_dir(episodes_dir).unwrap();
     for an_entry in dir_entries {
-        let the_entry = an_entry.expect("bard2");
+        let the_entry = an_entry.unwrap();
         let the_path = the_entry.path();
         if the_path.is_file() {
             match &the_path.file_name() {
@@ -38,7 +35,6 @@ pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
                     {
                         let k_real_file = String::from(real_file_str);
                         let v_real_file = String::from(real_file_str);
-                        //  warn!("epi_filter v_real_file {:?}", v_real_file);
                         local_episodes.insert(k_real_file, v_real_file);
                     }
                 }
@@ -46,7 +42,6 @@ pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
             }
         }
     }
-    //  Ok(local_episodes)
     local_episodes
 }
 
@@ -73,8 +68,6 @@ pub fn media_length(media_url: &str) -> Result<u64, Box<dyn error::Error>> {
     Ok(len_media)
 }
 
-//   https://docs.rs/reqwest/0.11.3/reqwest/struct.Response.html#method.chunk
-
 pub fn read_file(
     sel_podcast: String,
     file_name: String,
@@ -87,8 +80,6 @@ pub fn read_file(
     };
     let client = reqwest::blocking::Client::new();
     let local_file = format!("{}/{}", sel_podcast, file_name);
-    //warn!("read_file {:?}", local_file);
-    warn!(" read_file {:?}", local_file);
     g_current_active::change_status(&local_file, 0);
     let chunk_size = const_globals::CHUNK_SIZE;
     let finished_downloading =
@@ -96,7 +87,6 @@ pub fn read_file(
     Ok(finished_downloading)
 }
 
-// https://rust-lang-nursery.github.io/rust-cookbook/web/clients/download.html#make-a-partial-download-with-http-range-headers
 pub fn media_chunked(
     file_size: u64,
     chunk_size: u32,
