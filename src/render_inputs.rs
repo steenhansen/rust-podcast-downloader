@@ -173,13 +173,12 @@ fn can_do_all(the_app: &mut app_state::DownApp) -> bool {
     let just_dones = g_current_active::just_done(the_app.selected_podcast.clone());
     let old_and_new_count = local_file_count + just_dones;
     let local_count_same_as_rss = old_and_new_count == episode_file_count;
-
     if a_podcast_is_selected && currently_downloading && !local_count_same_as_rss {
         return true;
     }
 
     let old_and_new_count = the_app.local_episode_files.len() + just_dones;
-    let files_not_done = old_and_new_count != the_app.episode_2_url.len();
+    let files_not_done = old_and_new_count < the_app.episode_2_url.len();
 
     if the_app.selected_podcast.len() > 0
         && g_current_active::active_downloading() == 0

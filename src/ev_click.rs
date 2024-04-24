@@ -25,14 +25,15 @@ pub fn do_click_mouse(
         && the_app.ui_state != the_types::UiState::State201AllEpisodes
         && the_app.ui_state != the_types::UiState::State202SureAllEpisodes
         && the_app.ui_state != the_types::UiState::State301WaitForPopErrorClose
+        && the_app.ui_state != the_types::UiState::State401DownloadPaused
     {
         check_add(the_app, mouse_event);
         check_all(the_app, mouse_event);
         check_podcasts(the_app, mouse_event, the_frame);
         check_episodes(the_app, mouse_event, the_frame);
         check_resources(the_app, mouse_event);
-        check_pause(the_app, mouse_event);
     }
+    check_pause(the_app, mouse_event);
     check_error_ok(the_app, mouse_event, the_frame);
     check_all_ok(the_app, mouse_event, the_frame);
 
@@ -143,12 +144,17 @@ fn check_episodes(
     }
 }
 
-fn check_pause(_the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
+fn check_pause(the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
     let column = the_click.column;
     let row = the_click.row;
     let pause_area = areas_consts::PAUSE_AREA;
     if area_rects::point_in_rect(column, row, pause_area) {
-        g_pause_io::pause_flip();
+        let pause_state = g_pause_io::pause_flip();
+        if pause_state {
+            the_app.ui_state = the_types::UiState::State401DownloadPaused;
+        } else {
+            the_app.ui_state = the_types::UiState::State402NotPaused;
+        }
     }
 }
 

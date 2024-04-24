@@ -1,3 +1,5 @@
+#![warn(unused_extern_crates)]
+
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
@@ -23,6 +25,7 @@ mod g_current_active;
 mod g_pause_io;
 mod g_resource_speed;
 mod misc_fun;
+mod podcast_episodes;
 mod podcast_files;
 mod podcast_scroll;
 mod render_controls;
@@ -43,14 +46,14 @@ use std::{
 use ratatui::prelude::*;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut terminal = tui_term::init(const_globals::DEBUG_FILE)?;
+    let mut terminal = tui_term::init(const_globals::DEBUG_FILE).expect("tui-init-err");
 
     file_log::reqwest_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
 
     let tick_rate = Duration::from_millis(100);
     let app = app_state::DownApp::default();
     let res = run_app(&mut terminal, app, tick_rate);
-    tui_term::restore(terminal, res)?;
+    tui_term::restore(terminal, res).expect("tui-restore-err");
     Ok(())
 }
 
@@ -63,10 +66,12 @@ fn run_app<B: Backend>(
     podcast_scroll::get_dirs_of_podcasts(&mut the_app);
 
     loop {
-        terminal.draw(|f| app_ui::draw_ui(f, &mut the_app))?;
+        terminal
+            .draw(|f| app_ui::draw_ui(f, &mut the_app))
+            .expect("tui-draw-err");
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
-        if crossterm::event::poll(timeout)? {
+        if crossterm::event::poll(timeout).expect("tui-poll-err") {
             let mut the_frame = terminal.get_frame();
             let finish = ev_all::all_events_done(&mut the_frame, &mut the_app);
             if finish {

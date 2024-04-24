@@ -14,8 +14,9 @@ pub fn is_cur_paused() -> bool {
     is_paused
 }
 
-pub fn pause_flip() {
+pub fn pause_flip() -> bool {
     let current_pausing = *PROGRAM_PAUSED.lock().expect("current-pause-flip-err");
     let new_pausing = !current_pausing;
     *PROGRAM_PAUSED.lock().expect("current-pause-set-err") = new_pausing;
+    new_pausing
 }

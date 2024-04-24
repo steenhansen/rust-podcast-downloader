@@ -4,7 +4,8 @@ use log::{debug, info, trace, warn};
 use crate::app_state;
 use crate::episode_threads;
 use crate::episodes_chunks;
-use crate::podcast_files;
+use crate::podcast_episodes;
+
 use crate::the_types;
 
 pub fn after_ui(the_app: &mut app_state::DownApp) {
@@ -12,7 +13,7 @@ pub fn after_ui(the_app: &mut app_state::DownApp) {
         the_app.ui_state = the_types::UiState::State102ShowWaiting;
     } else if the_app.ui_state == the_types::UiState::State102ShowWaiting {
         the_app.local_episode_files = episodes_chunks::read_episode_dir(&the_app.selected_podcast);
-        match podcast_files::get_epi_list(the_app) {
+        match podcast_episodes::get_epi_list(the_app) {
             Ok(_v) => {
                 the_app.ui_state = the_types::UiState::State103ShowEpisodes;
             }

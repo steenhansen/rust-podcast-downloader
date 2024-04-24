@@ -15,6 +15,8 @@ use crate::render_misc;
 use crate::the_types;
 
 use ratatui::prelude::*;
+use std::time::SystemTime;
+//use time::OffsetDateTime;
 
 pub fn show_title(
     console_frame: &mut Frame,
@@ -41,7 +43,20 @@ pub fn show_title(
 
 pub fn show_quit(console_frame: &mut Frame) {
     let up_right_area = area_rects::get_quit_area(console_frame);
-    render_misc::render_close(console_frame, up_right_area, " X ");
+
+    let now = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .expect("system-time-err");
+    let elapsed_sed = now.as_secs();
+    let show_alive = elapsed_sed % 5;
+    let color_spinner = match show_alive {
+        0 => Color::Green,
+        1 => Color::LightRed,
+        2 => Color::Yellow,
+        3 => Color::LightMagenta,
+        _ => Color::Cyan,
+    };
+    render_misc::render_quit(console_frame, up_right_area, " X ", color_spinner);
 }
 
 pub fn show_pause(

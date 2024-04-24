@@ -6,11 +6,31 @@ use crate::app_state;
 use ratatui::layout::Rect;
 use ratatui::{prelude::*, widgets::*};
 
-pub fn render_close(console_frame: &mut Frame, draw_area: Rect, box_title: &str) {
+pub fn render_quit(console_frame: &mut Frame, draw_area: Rect, box_title: &str, spinner: Color) {
     let area_safe = draw_area.intersection(console_frame.size());
     let paragraph = Paragraph::new(box_title)
         .block(Block::new().borders(Borders::ALL))
         .style(Style::default().add_modifier(Modifier::BOLD));
+    console_frame.render_widget(paragraph, area_safe);
+
+    let white_square = Rect {
+        x: area_safe.x + 2,
+        y: area_safe.y + 1,
+        width: 1,
+        height: 1,
+    };
+    let box_style = Style::default().fg(spinner).add_modifier(Modifier::BOLD);
+    let paragraph = Paragraph::new("X").block(Block::new()).style(box_style);
+    console_frame.render_widget(paragraph, white_square);
+}
+
+pub fn render_close(console_frame: &mut Frame, draw_area: Rect, box_title: &str) {
+    let area_safe = draw_area.intersection(console_frame.size());
+
+    let the_style = Style::default().add_modifier(Modifier::BOLD);
+    let paragraph = Paragraph::new(box_title)
+        .block(Block::new().borders(Borders::ALL))
+        .style(the_style);
     console_frame.render_widget(paragraph, area_safe);
 }
 

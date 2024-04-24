@@ -15,36 +15,38 @@ pub type PodcastMetadataTuple = (PodcastName, EpisodeFilename, EpisodeUrl);
 #[derive(Debug, Default, Clone, Copy, Display, FromRepr, EnumIter, PartialEq)]
 pub enum UiState {
     #[default]
-    #[strum(to_string = "StateNoFocus")]
+    #[strum(to_string = "State001NoFocus")]
     StateNoFocus,
-    #[strum(to_string = "State001NewPodcastUrl")]
+    #[strum(to_string = "State101NewPodcastUrl")]
     State001NewPodcastUrl,
-    #[strum(to_string = "State002NewPodcastName")]
+    #[strum(to_string = "State102NewPodcastName")]
     State002NewPodcastName,
-    #[strum(to_string = "State003ClickedAdd")]
+    #[strum(to_string = "State103ClickedAdd")]
     State003ClickedAdd,
 
-    #[strum(to_string = "State101ReadingRss")]
+    #[strum(to_string = "State201ReadingRss")]
     State101ReadingRss,
-    #[strum(to_string = "State102ShowWaiting")]
+    #[strum(to_string = "State202ShowWaiting")]
     State102ShowWaiting,
-    #[strum(to_string = "State103ShowEpisodes")]
+    #[strum(to_string = "State203ShowEpisodes")]
     State103ShowEpisodes,
-    #[strum(to_string = "State104UpdatedEpisodes")]
+    #[strum(to_string = "State204UpdatedEpisodes")]
     State104UpdatedEpisodes,
 
-    #[strum(to_string = "State201AllEpisodes")]
+    #[strum(to_string = "State301AllEpisodes")]
     State201AllEpisodes,
-    #[strum(to_string = "State202SureAllEpisodes")]
+    #[strum(to_string = "State302SureAllEpisodes")]
     State202SureAllEpisodes,
-    #[strum(to_string = "State203DownloadedingAll")]
+    #[strum(to_string = "State303DownloadedingAll")]
     State203DownloadedingAll,
-    #[strum(to_string = "State204AfterAll")]
+    #[strum(to_string = "State304AfterAll")]
     State204AfterAll,
 
-    #[strum(to_string = "State301WaitForPopErrorClose")]
+    #[strum(to_string = "State401WaitForPopErrorClose")]
     State301WaitForPopErrorClose,
 
-    #[strum(to_string = "StateLocalFiles")]
-    StateLocalFiles,
+    #[strum(to_string = "State501DownloadPaused")]
+    State401DownloadPaused,
+    #[strum(to_string = "State502NotPaused")]
+    State402NotPaused,
 }
