@@ -1,19 +1,17 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
+use crate::app_state;
 use crate::ev_click;
 use crate::ev_key;
-
-use crate::app_state;
 use crate::ev_scroll;
 use crate::misc_fun;
 
 use crossterm::event::{self, Event, KeyEventKind};
-
 use ratatui::prelude::*;
 
 pub fn all_events_done(the_frame: &mut Frame, the_app: &mut app_state::DownApp) -> bool {
-    match event::read().unwrap() {
+    match event::read().expect("event-key-err") {
         Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
             if misc_fun::is_control_c(key_event) {
                 return true;

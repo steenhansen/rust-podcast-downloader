@@ -3,6 +3,7 @@ use log::{debug, info, trace, warn};
 
 use crate::app_state;
 use crate::area_rects;
+
 use crossterm::event::{MouseEvent, MouseEventKind};
 use ratatui::prelude::*;
 

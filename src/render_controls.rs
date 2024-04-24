@@ -5,10 +5,9 @@ use crate::{app_state, const_globals};
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
-
 use ratatui::{prelude::*, widgets::*};
 
-pub fn render_prefix(
+pub fn render_pause(
     console_frame: &mut Frame,
     draw_area: Rect,
     _the_app: &mut app_state::DownApp,
@@ -32,15 +31,15 @@ pub fn render_resources(
     draw_area: Rect,
     the_app: &mut app_state::DownApp,
     box_title: &str,
-    dim_background: bool,
+    wait_color: Color,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let resource_text_color;
-    if dim_background {
-        resource_text_color = const_globals::DIMMED_BACKGROUND_WAIT;
-    } else {
-        resource_text_color = const_globals::NORMAL_TEXT_COL;
-    }
+
+    let resource_text_color = match wait_color {
+        Color::Reset => const_globals::NORMAL_TEXT_COL,
+        _ => wait_color,
+    };
+
     let box_style = Style::default().fg(resource_text_color);
 
     let fast_radio = match the_app.fast_med_slow == 0 {

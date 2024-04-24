@@ -2,11 +2,10 @@
 use log::{debug, info, trace, warn};
 
 use crate::app_state;
-
 use crate::the_types;
+
 use crossterm::cursor::MoveTo;
 use crossterm::event::KeyCode;
-
 use crossterm::event::KeyEvent;
 use crossterm::execute;
 use std::io::stdout;
@@ -46,6 +45,6 @@ pub fn edit_text(ed_text: &String, the_code: KeyCode) -> String {
         MoveTo(13, 1),
         crossterm::cursor::SetCursorStyle::BlinkingUnderScore
     )
-    .unwrap();
+    .expect("edit-text-err");
     ed_text2
 }

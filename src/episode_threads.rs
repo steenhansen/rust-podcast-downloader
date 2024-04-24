@@ -1,10 +1,12 @@
-use crate::app_state;
-use crate::const_globals;
-use crate::episodes_files;
-use crate::g_current_active;
-use crate::g_resource_speed;
 #[allow(unused)]
 use log::{debug, info, trace, warn};
+
+use crate::app_state;
+use crate::const_globals;
+use crate::episodes_chunks;
+use crate::g_current_active;
+use crate::g_resource_speed;
+
 use std::thread;
 
 pub fn queue_episode_download(
@@ -26,7 +28,7 @@ fn spawn_it(sel_podcast: String, media_fname: String, url_episode: String) {
 
     if !g_current_active::is_in(local_file) {
         let _handle = thread::spawn(move || {
-            let _abc = episodes_files::read_file(sel_podcast, media_fname, url_episode);
+            let _abc = episodes_chunks::read_file(sel_podcast, media_fname, url_episode);
         });
     }
 }

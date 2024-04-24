@@ -1,9 +1,7 @@
-#![warn(clippy::pedantic)]
-#![allow(clippy::wildcard_imports)]
-
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
+mod app_show;
 mod app_state;
 mod app_ui;
 mod area_rects;
@@ -11,9 +9,10 @@ mod areas_consts;
 mod chunk_range;
 mod close_error;
 mod const_globals;
+mod episode_colors;
 mod episode_scroll;
 mod episode_threads;
-mod episodes_files;
+mod episodes_chunks;
 mod ev_after_draw;
 mod ev_all;
 mod ev_click;
@@ -21,16 +20,18 @@ mod ev_key;
 mod ev_scroll;
 mod file_log;
 mod g_current_active;
+mod g_pause_io;
 mod g_resource_speed;
 mod misc_fun;
 mod podcast_files;
 mod podcast_scroll;
-mod render_add;
+mod render_controls;
+mod render_inputs;
 mod render_misc;
-mod render_speed;
 mod rss_xml;
 mod the_types;
 mod tui_term;
+
 use log::LevelFilter;
 
 use std::{

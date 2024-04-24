@@ -1,5 +1,6 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
+
 use ratatui::layout::Rect;
 
 pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
@@ -7,13 +8,6 @@ pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
     y: 1,
     width: 74,
     height: 3,
-};
-
-pub const TITLE_AREA: ratatui::layout::Rect = Rect {
-    x: 0,
-    y: 0,
-    width: 30,
-    height: 1,
 };
 
 pub const NEW_NAME_AREA: ratatui::layout::Rect = Rect {
@@ -52,7 +46,7 @@ pub const RADIO_AREA: ratatui::layout::Rect = Rect {
     height: 5,
 };
 
-pub const PREFIX_AREA: ratatui::layout::Rect = Rect {
+pub const PAUSE_AREA: ratatui::layout::Rect = Rect {
     x: 76,
     y: 7,
     width: 27,

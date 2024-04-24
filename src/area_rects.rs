@@ -1,7 +1,8 @@
-use crate::areas_consts;
-
 #[allow(unused)]
 use log::{debug, info, trace, warn};
+
+use crate::areas_consts;
+
 use ratatui::layout::Rect;
 use ratatui::prelude::*;
 
@@ -43,6 +44,19 @@ pub fn get_error_close_area(console_frame: &mut Frame) -> Rect {
     close_err_area.width = 5;
     close_err_area.height = 3;
     close_err_area
+}
+
+pub fn get_title_area(console_frame: &mut Frame, the_title: &str) -> Rect {
+    let area_frame = console_frame.size();
+    let title_width = the_title.len() as u16;
+    let left_start = (area_frame.width - title_width) / 2;
+    let up_right_area = Rect {
+        x: left_start,
+        y: 0,
+        width: title_width,
+        height: 1,
+    };
+    up_right_area
 }
 
 pub fn get_quit_area(console_frame: &mut Frame) -> Rect {

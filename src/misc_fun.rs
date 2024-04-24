@@ -1,11 +1,14 @@
+#[allow(unused)]
+use log::{debug, info, trace, warn};
+
 use crate::areas_consts;
 use crate::const_globals;
+
 use crossterm::event::{
     KeyCode, KeyEvent, KeyModifiers, MouseButton::Left, MouseEvent, MouseEventKind,
 };
-#[allow(unused)]
-use log::{debug, info, trace, warn};
 use regex::Regex;
+
 pub fn epi_prefix_num(episode_index: usize) -> String {
     let str_index = format!(
         "{:0width$}",
@@ -75,8 +78,9 @@ pub fn below_episodes(
 }
 
 pub fn clean_title(actual_title: String) -> String {
-    let only_alpha = Regex::new(const_globals::ONLY_ALPHA_REGX).unwrap();
-    let multi_spaces = Regex::new(const_globals::MULTI_SPACES_REGX).unwrap();
+    let only_alpha = Regex::new(const_globals::ONLY_ALPHA_REGX).expect("only-alpha-regex-err");
+    let multi_spaces =
+        Regex::new(const_globals::MULTI_SPACES_REGX).expect("multi-spaces-regex-err");
 
     let title_change = actual_title.as_str();
     let title_cow = only_alpha.replace_all(title_change, const_globals::REPLACE_TO_SPACE);

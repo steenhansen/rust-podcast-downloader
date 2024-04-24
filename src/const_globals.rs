@@ -4,7 +4,6 @@ use std::time::Duration;
 pub const DEBUG_FILE: &str = "zzz_debug_log.txt";
 
 pub const RSS_TEXT_FILE: &str = "podcast_address.rss";
-pub const INT_PREFIX_Y_N: &str = "podcast_prefix.int";
 
 pub const REPLACE_TO_SPACE: &str = " ";
 pub const WORKING_FILE: &str = "-working";
@@ -25,6 +24,8 @@ pub const RADIO_RESOURCES: [&'static str; 3] = ["Fast", "Medium", "Slow"];
 pub const _SLEEP_SEC_FAST: u64 = 0;
 pub const SLEEP_SEC_MED: u64 = 2;
 pub const SLEEP_SEC_SLOW: u64 = 10;
+
+pub const PAUSE_SLEEP_SEC: u64 = 1;
 
 pub const MAX_SPAWNS_FAST: usize = 8;
 pub const MAX_SPAWNS_MED: usize = 3;
@@ -49,8 +50,6 @@ pub const RSS_SOME_TIMEOUT: Option<Duration> = Some(Duration::from_secs(100));
 pub const PODCAST_SELECTED: Color = Color::Red;
 pub const PODCAST_NOT_SELECTED: Color = Color::Green;
 
-pub const DIMMED_BACKGROUND_WAIT: Color = Color::DarkGray;
-
 pub const BUTTON_READY: Color = Color::Green;
 
 pub const DIMMED_BUTTON_TEXT: Color = Color::Black;
@@ -58,3 +57,17 @@ pub const NORMAL_TEXT_COL: Color = Color::White;
 
 pub const FINISHED_INDENT: &str = "   ";
 pub const ZERO_START_INDENT: &str = "0000000 - ";
+
+pub const PAUSE_COLOR: Color = Color::Yellow;
+pub const DIMMED_BACKGROUND_WAIT: Color = Color::DarkGray; //Color::Blue;
+pub const BLACK_WAIT: Color = Color::Black;
+
+pub const NORMAL_BORDER_COL: Color = Color::Reset;
+
+pub const LOADING_EPISODES_COL: Color = Color::Red;
+
+pub const NO_FOCUS_TEXT: Color = Color::DarkGray;
+
+pub const BUTTON_OFF: Color = Color::DarkGray;
+
+pub const TITLE_COLOR: Color = Color::White;

@@ -31,7 +31,7 @@ impl Iterator for ChunkRangeIter {
             let cur_size_buffer = std::cmp::min(size_chunks as u64, ending_size);
             self.chunk_start += cur_size_buffer;
             let bytes_start_stop = &format!("bytes={}-{}", prev_start, self.chunk_start - 1);
-            let the_range = HeaderValue::from_str(bytes_start_stop).expect("chunk_range_iter");
+            let the_range = HeaderValue::from_str(bytes_start_stop).expect("chunk_range_iter-err");
             Some(the_range)
         }
     }

@@ -6,11 +6,12 @@ use crate::area_rects;
 use crate::areas_consts;
 use crate::episode_threads;
 use crate::g_current_active;
+use crate::g_pause_io;
 use crate::g_resource_speed;
 use crate::misc_fun;
-use crate::podcast_files;
 use crate::podcast_scroll;
 use crate::the_types;
+
 use crossterm::event::{MouseButton::Left, MouseEvent, MouseEventKind};
 use ratatui::prelude::*;
 
@@ -30,7 +31,7 @@ pub fn do_click_mouse(
         check_podcasts(the_app, mouse_event, the_frame);
         check_episodes(the_app, mouse_event, the_frame);
         check_resources(the_app, mouse_event);
-        check_prefix(the_app, mouse_event);
+        check_pause(the_app, mouse_event);
     }
     check_error_ok(the_app, mouse_event, the_frame);
     check_all_ok(the_app, mouse_event, the_frame);
@@ -61,7 +62,7 @@ fn check_add(the_app: &mut app_state::DownApp, the_click: MouseEvent) {
 
     if area_rects::point_in_rect(column, row, areas_consts::ADD_PODCAST_AREA) {
         if the_app.new_podcast_url.len() > 0 && the_app.new_podcast_name.len() > 0 {
-            podcast_scroll::create_pod_dir(the_app).unwrap();
+            podcast_scroll::create_pod_dir(the_app).expect("create-dir-err");
             the_app.ui_state = the_types::UiState::State003ClickedAdd;
         }
     }
@@ -142,21 +143,20 @@ fn check_episodes(
     }
 }
 
-fn check_prefix(the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
+fn check_pause(_the_app: &mut app_state::DownApp, the_click: MouseEvent) -> () {
     let column = the_click.column;
     let row = the_click.row;
-    let prefix_area = areas_consts::PREFIX_AREA;
-    if area_rects::point_in_rect(column, row, prefix_area) {
-        podcast_scroll::flip_prefix(the_app).unwrap();
-        podcast_files::get_epi_list(the_app).unwrap();
+    let pause_area = areas_consts::PAUSE_AREA;
+    if area_rects::point_in_rect(column, row, pause_area) {
+        g_pause_io::pause_flip();
     }
 }
 
 fn podcast_click(the_app: &mut app_state::DownApp, mouse_event: MouseEvent) -> () {
     let scroll_offest_pod = the_app.scrolled_podcasts_pos;
     let num_podcasts = the_app.ordered_podcasts.len();
-    let is_o = misc_fun::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
-    if !is_o {
+    let is_below_last = misc_fun::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
+    if !is_below_last {
         let row = mouse_event.row as usize;
         let m_ev_kind = mouse_event.kind;
         if left_click(m_ev_kind) {
@@ -171,7 +171,6 @@ fn podcast_click(the_app: &mut app_state::DownApp, mouse_event: MouseEvent) -> (
         }
     }
     the_app.selected_podcast = "-podcast-click-outside-".to_string();
-    return;
 }
 
 fn episode_click(the_app: &mut app_state::DownApp, episode_click: MouseEvent) -> () {

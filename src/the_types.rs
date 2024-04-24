@@ -1,5 +1,17 @@
 use strum::{Display, EnumIter, FromRepr};
 
+pub type PodcastName = String;
+pub type PodcastUrl = String;
+
+pub type EpisodeIndex = i32;
+pub type EpisodeFilename = String;
+pub type EpisodeTitle = String;
+pub type EpisodeLength = i32;
+pub type EpisodeUrl = String;
+
+pub type EpisodeMetadataTuple = (EpisodeIndex, EpisodeTitle, EpisodeUrl, EpisodeLength);
+pub type PodcastMetadataTuple = (PodcastName, EpisodeFilename, EpisodeUrl);
+
 #[derive(Debug, Default, Clone, Copy, Display, FromRepr, EnumIter, PartialEq)]
 pub enum UiState {
     #[default]

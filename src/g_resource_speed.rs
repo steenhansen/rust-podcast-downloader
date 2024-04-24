@@ -12,8 +12,8 @@ pub static RESOURCE_SPEED: Lazy<Mutex<u16>> = Lazy::new(|| {
 });
 
 pub fn change_speed(new_speed: u16) {
-    *RESOURCE_SPEED.lock().unwrap() = new_speed;
+    *RESOURCE_SPEED.lock().expect("resource-speed-change-err") = new_speed;
 }
 pub fn get_speed() -> u16 {
-    *RESOURCE_SPEED.lock().unwrap()
+    *RESOURCE_SPEED.lock().expect("get-resource-speed-err")
 }
