@@ -5,7 +5,7 @@
 
 
 
-<a name="fast-start"></a>
+<a name="s"></a>
 # Rust Terminal Podcast Downloader ![](./images/Animation.gif)
 
 
