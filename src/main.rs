@@ -3,39 +3,23 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-mod app_show;
-mod app_state;
 mod app_ui;
-mod area_rects;
-mod areas_consts;
-mod chunk_range;
-mod close_error;
-mod const_globals;
-mod episode_colors;
-mod episode_scroll;
-mod episode_threads;
-mod episodes_chunks;
-mod ev_after_draw;
-mod ev_all;
-mod ev_click;
-mod ev_key;
-mod ev_scroll;
-mod file_log;
-mod g_current_active;
-mod g_pause_io;
-mod g_resource_speed;
-mod misc_fun;
-mod podcast_episodes;
-mod podcast_files;
-mod podcast_scroll;
-mod render_controls;
-mod render_inputs;
-mod render_misc;
-mod rss_xml;
-mod the_types;
-mod tui_term;
+
+pub mod chunks;
+pub mod components;
+pub mod consts;
+pub mod dialogs;
+pub mod episodes;
+pub mod events;
+pub mod files;
+pub mod globals;
+pub mod misc;
+pub mod podcasts;
+pub mod state;
 
 use log::LevelFilter;
+
+use ratatui::prelude::*;
 
 use std::{
     error::Error,
@@ -43,43 +27,44 @@ use std::{
     time::{Duration, Instant},
 };
 
-use ratatui::prelude::*;
-
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut terminal = tui_term::init(const_globals::DEBUG_FILE).expect("tui-init-err");
+    let mut the_terminal =
+        misc::tui_term::init(consts::const_globals::DEBUG_FILE).expect("tui-init-err");
 
-    file_log::reqwest_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
+    files::file_log::reqwest_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
 
     let tick_rate = Duration::from_millis(100);
-    let app = app_state::DownApp::default();
-    let res = run_app(&mut terminal, app, tick_rate);
-    tui_term::restore(terminal, res).expect("tui-restore-err");
+    let mut app = state::app_state::DownApp::default();
+
+    app.hover_element = state::app_state::HOVER_NONE.to_string();
+    let res = run_app(&mut the_terminal, app, tick_rate);
+    misc::tui_term::restore(the_terminal, res).expect("tui-restore-err");
     Ok(())
 }
 
 fn run_app<B: Backend>(
-    terminal: &mut Terminal<B>,
-    mut the_app: app_state::DownApp,
+    the_terminal: &mut Terminal<B>,
+    mut the_app: state::app_state::DownApp,
     tick_rate: Duration,
 ) -> io::Result<()> {
     let mut last_tick = Instant::now();
-    podcast_scroll::get_dirs_of_podcasts(&mut the_app);
+    podcasts::podcast_state::get_dirs_of_podcasts(&mut the_app);
 
     loop {
-        terminal
+        the_terminal
             .draw(|f| app_ui::draw_ui(f, &mut the_app))
             .expect("tui-draw-err");
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if crossterm::event::poll(timeout).expect("tui-poll-err") {
-            let mut the_frame = terminal.get_frame();
-            let finish = ev_all::all_events_done(&mut the_frame, &mut the_app);
+            let mut the_frame = the_terminal.get_frame();
+            let finish = events::ev_all::all_events_done(&mut the_frame, &mut the_app);
             if finish {
                 return Ok(());
             }
         }
-        ev_after_draw::after_ui(&mut the_app);
-        episode_threads::check_start_down(&mut the_app);
+        state::state_reify::change_app_state_type(&mut the_app);
+        chunks::episode_threads::check_start_down(&mut the_app);
         if last_tick.elapsed() >= tick_rate {
             last_tick = Instant::now();
         }
