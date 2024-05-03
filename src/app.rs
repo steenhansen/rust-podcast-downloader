@@ -11,7 +11,6 @@ use crate::components::radio_resource;
 use crate::components::words_feed;
 use crate::components::words_status;
 use crate::components::words_title;
-
 use crate::dialogs::dialog_error;
 use crate::dialogs::dialog_help;
 use crate::dialogs::dialog_sure;

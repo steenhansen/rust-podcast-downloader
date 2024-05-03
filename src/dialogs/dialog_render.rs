@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_colors;
 
 use ratatui::layout::Rect;
 use ratatui::prelude::Style;
@@ -13,6 +13,7 @@ pub fn render_box(
     draw_area: Rect,
     console_frame: &mut Frame,
     the_title: &str,
+    the_example: &str,
     draw_name: String,
     url_color: Color,
     is_edit: bool,
@@ -24,8 +25,11 @@ pub fn render_box(
         .style(box_style)
         .alignment(Alignment::Left)
         .wrap(Wrap { trim: true });
-
     console_frame.render_widget(paragraph, area_safe);
+
+    let area_safe = draw_area.intersection(console_frame.size());
+    let span2 = Span::styled(the_example, Style::new().fg(Color::DarkGray)).to_right_aligned_line();
+    console_frame.render_widget(span2, area_safe);
 
     if is_edit {
         let so_far_len = draw_name.len();
@@ -73,14 +77,13 @@ pub fn dialog_block(title: &str) -> Block {
         .style(Style::default().fg(Color::Gray))
         .title(Span::styled(title, Style::default()))
 }
-///////////////////////////////
 
 pub fn dialog_yes_no(hover_element: String, hover_type: String, the_label: &str) -> Paragraph {
-    let mut yes_text_color = consts_globals::BTN_EVERY_TEXT_READY;
-    let mut yes_background_color = consts_globals::BTN_EVERY_BACK_READY;
+    let mut yes_text_color = const_colors::BTN_EVERY_TEXT_READY;
+    let mut yes_background_color = const_colors::BTN_EVERY_BACK_READY;
     if hover_element == hover_type {
-        yes_text_color = consts_globals::BTN_EVERY_TEXT_HOVER;
-        yes_background_color = consts_globals::BTN_EVERY_BACK_HOVER;
+        yes_text_color = const_colors::BTN_EVERY_TEXT_HOVER;
+        yes_background_color = const_colors::BTN_EVERY_BACK_HOVER;
     }
     let yes_style = Style::default().fg(yes_text_color).bg(yes_background_color);
 
@@ -88,5 +91,4 @@ pub fn dialog_yes_no(hover_element: String, hover_type: String, the_label: &str)
         .block(Block::new().borders(Borders::NONE))
         .style(yes_style);
     paragraph
-    // console_frame.render_widget(paragraph, hover_area);
 }

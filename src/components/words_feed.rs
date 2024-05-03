@@ -2,8 +2,8 @@
 use log::{debug, info, trace, warn};
 
 use crate::components::podcasts::podcast_directory;
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
+use crate::consts::const_areas;
+use crate::consts::const_colors;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
@@ -13,8 +13,8 @@ pub fn rect_feed(console_frame: &mut Frame, the_url: &str) -> Rect {
     let area_frame = console_frame.size();
     let url_width = the_url.len() as u16;
     let mut left_start: i16 = area_frame.width as i16 - url_width as i16;
-    if left_start < consts_areas::MIN_FEED_X_START {
-        left_start = consts_areas::MIN_FEED_X_START;
+    if left_start < const_areas::MIN_FEED_X_START {
+        left_start = const_areas::MIN_FEED_X_START;
     }
     let up_right_area = Rect {
         x: left_start as u16,
@@ -36,11 +36,11 @@ pub fn feed_show(
         let rss_feed = podcast_directory::directory_get_filename(podcast_name);
 
         let address_area = rect_feed(console_frame, &rss_feed);
-        let mut wait_color = consts_globals::NORMAL_BORDER_COL;
+        let mut wait_color = const_colors::NORMAL_BORDER_COL;
         if is_downloading_paused {
-            wait_color = consts_globals::PAUSE_COLOR;
+            wait_color = const_colors::PAUSE_COLOR;
         } else if app_dim {
-            wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+            wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
         }
         feed_render(console_frame, address_area, the_app, &rss_feed, wait_color);
     }

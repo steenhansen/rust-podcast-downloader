@@ -1,8 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
-
+use crate::consts::const_colors;
 use crate::globals::g_active;
 use crate::state::state_app;
 
@@ -27,11 +26,11 @@ pub fn status_show(
     is_downloading_paused: bool,
 ) {
     let status_area = rect_status(console_frame);
-    let mut wait_color = consts_globals::NORMAL_BORDER_COL;
+    let mut wait_color = const_colors::NORMAL_BORDER_COL;
     if is_downloading_paused {
-        wait_color = consts_globals::PAUSE_COLOR;
+        wait_color = const_colors::PAUSE_COLOR;
     } else if app_dim {
-        wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+        wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
     }
     let num_downloading = g_active::active_downloading();
     let num_waiting = the_app.download_deque.len();

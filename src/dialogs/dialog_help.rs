@@ -1,21 +1,20 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use ratatui::layout::Rect;
-use ratatui::style::Stylize;
-use ratatui::{prelude::*, widgets::*};
-
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_areas;
+use crate::consts::const_colors;
+use crate::consts::const_types;
 use crate::dialogs::dialog_render;
 use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
+use ratatui::layout::Rect;
+use ratatui::style::Stylize;
+use ratatui::{prelude::*, widgets::*};
 
 pub fn help_render(console_frame: &mut Frame, the_app: &state_app::DownApp) {
-    if the_app.ui_state == consts_types::UiState::State501Help {
+    if the_app.ui_state == const_types::UiState::State501Help {
         let help_1 = "                 H : This help\n";
         let help_2 = "               Tab : Move to next text box\n";
         let help_3 = "            Crtl-C : Quit\n";
@@ -33,17 +32,17 @@ pub fn help_render(console_frame: &mut Frame, the_app: &state_app::DownApp) {
 pub fn ok_draw_help(console_frame: &mut Frame, the_app: &state_app::DownApp, a_message: String) {
     let area = console_frame.size();
 
-    let mut border_color = consts_globals::FOCUS_NOT;
+    let mut border_color = const_colors::FOCUS_NOT;
     if the_app.hover_element == state_app::HOVER_HELP_DIALOG
         || the_app.hover_element == state_app::HOVER_HELP_OK
     {
-        border_color = consts_globals::FOCUS_HOVER;
+        border_color = const_colors::FOCUS_HOVER;
     }
 
     let paragraph = Paragraph::new(a_message)
         .style(Style::default().fg(border_color))
         .block(dialog_render::dialog_block("Commands").fg(border_color));
-    let help_size = consts_areas::HELP_SIZE_AREA;
+    let help_size = const_areas::HELP_SIZE_AREA;
     let centered_area = dialog_render::dialog_centered(help_size, area);
     console_frame.render_widget(Clear, centered_area);
     console_frame.render_widget(paragraph, centered_area);
@@ -60,10 +59,10 @@ pub fn ok_draw_help(console_frame: &mut Frame, the_app: &state_app::DownApp, a_m
 
 pub fn hover_help_ok_area(console_frame: &mut Frame) -> Rect {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::HELP_SIZE_AREA;
+    let help_size = const_areas::HELP_SIZE_AREA;
     let help_centered = dialog_render::dialog_centered(help_size, frame_area);
 
-    let ok_area = consts_areas::HELP_SIZE_OK;
+    let ok_area = const_areas::HELP_SIZE_OK;
     let ok_centered_area = dialog_render::ok_centered(ok_area, help_centered);
     ok_centered_area
 }
@@ -74,7 +73,7 @@ pub fn help_hover(
     hover_event: MouseEvent,
 ) {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::HELP_SIZE_AREA;
+    let help_size = const_areas::HELP_SIZE_AREA;
     let help_centered = dialog_render::dialog_centered(help_size, frame_area);
 
     let column = hover_event.column;

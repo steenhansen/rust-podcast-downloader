@@ -4,9 +4,8 @@ use log::{debug, info, trace, warn};
 use crate::components::episodes::episode_acts;
 use crate::components::episodes::episode_colors;
 use crate::components::episodes::episode_display;
-use crate::consts::consts_globals;
-
-use crate::consts::consts_types;
+use crate::consts::const_colors;
+use crate::consts::const_types;
 use crate::globals::g_active;
 use crate::state::state_app;
 
@@ -21,30 +20,29 @@ pub fn case_state_of_episodes(
 ) {
     if the_app.selected_podcast != "" {
         let elastic_epi_area = episode_acts::rect_episode(console_frame);
-        let mut wait_color = consts_globals::NORMAL_BORDER_COL;
+        let mut wait_color = const_colors::NORMAL_BORDER_COL;
         if is_downloading_paused {
-            wait_color = consts_globals::PAUSE_COLOR;
+            wait_color = const_colors::PAUSE_COLOR;
         } else if app_dim {
-            wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+            wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
         }
-        if the_app.ui_state == consts_types::UiState::State601KillingDownloads
-            || the_app.ui_state == consts_types::UiState::State001NewPodcastUrl
-            || the_app.ui_state == consts_types::UiState::State002NewPodcastName
+        if the_app.ui_state == const_types::UiState::State601KillingDownloads
+            || the_app.ui_state == const_types::UiState::State001NewPodcastUrl
+            || the_app.ui_state == const_types::UiState::State002NewPodcastName
         {
             episode_display::display_display_render_epi_list_empty(
                 console_frame,
                 elastic_epi_area,
                 the_app,
-                String::from(""),
                 wait_color,
             );
-        } else if the_app.ui_state == consts_types::UiState::State103ShowEpisodes
-            || the_app.ui_state == consts_types::UiState::State401DownloadPaused
-            || the_app.ui_state == consts_types::UiState::State001NewPodcastUrl
-            || the_app.ui_state == consts_types::UiState::State002NewPodcastName
-            || the_app.ui_state == consts_types::UiState::State003ClickedNew
-            || the_app.ui_state == consts_types::UiState::State203DownloadingEvery
-            || the_app.ui_state == consts_types::UiState::State501Help
+        } else if the_app.ui_state == const_types::UiState::State103ShowEpisodes
+            || the_app.ui_state == const_types::UiState::State401DownloadPaused
+            || the_app.ui_state == const_types::UiState::State001NewPodcastUrl
+            || the_app.ui_state == const_types::UiState::State002NewPodcastName
+            || the_app.ui_state == const_types::UiState::State003ClickedNew
+            || the_app.ui_state == const_types::UiState::State203DownloadingEvery
+            || the_app.ui_state == const_types::UiState::State501Help
         {
             episode_display::display_render_epi_list(
                 console_frame,
@@ -59,7 +57,6 @@ pub fn case_state_of_episodes(
                 console_frame,
                 elastic_epi_area,
                 the_app,
-                String::from(""),
                 wait_color,
             );
         }

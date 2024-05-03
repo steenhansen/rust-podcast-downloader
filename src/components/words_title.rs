@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_colors;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
@@ -28,11 +28,11 @@ pub fn title_show(
 ) {
     let the_title = "Terminal Rust Podcast Downloader";
     let title_area = rect_title(console_frame, the_title);
-    let mut wait_color = consts_globals::TITLE_COLOR;
+    let mut wait_color = const_colors::TITLE_COLOR;
     if is_downloading_paused {
-        wait_color = consts_globals::PAUSE_COLOR;
+        wait_color = const_colors::PAUSE_COLOR;
     } else if app_dim {
-        wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+        wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
     }
     title_render(
         console_frame,

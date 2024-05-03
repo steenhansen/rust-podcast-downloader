@@ -3,8 +3,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-mod app;
-
+pub mod app;
 pub mod components;
 pub mod consts;
 pub mod dialogs;
@@ -25,7 +24,7 @@ use std::{
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut the_terminal =
-        misc::misc_tui::tui_init(consts::consts_globals::DEBUG_FILE).expect("tui-init-err");
+        misc::misc_tui::tui_init(consts::const_globals::DEBUG_FILE).expect("tui-init-err");
 
     files::file_log::log_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
 

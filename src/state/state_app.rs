@@ -1,8 +1,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_types;
-use crate::consts::consts_types::*;
+use crate::consts::const_types;
+use crate::consts::const_types::*;
 
 use ratatui::widgets::*;
 use std::collections::HashMap;
@@ -75,12 +75,12 @@ pub const HOVER_SURE_NO: &str = "HOVER-SURE-NO";
 
 pub fn app_dim(the_app: &DownApp) -> bool {
     let ui_state = the_app.ui_state;
-    if ui_state == consts_types::UiState::State101ReadingRss
-        || ui_state == consts_types::UiState::State102ShowWaiting
-        || ui_state == consts_types::UiState::State201EveryEpisode
-        || ui_state == consts_types::UiState::State202SureEveryEpisode
-        || ui_state == consts_types::UiState::State301WaitForPopErrorClose
-        || ui_state == consts_types::UiState::State501Help
+    if ui_state == const_types::UiState::State101ReadingRss
+        || ui_state == const_types::UiState::State102ShowWaiting
+        || ui_state == const_types::UiState::State201EveryEpisode
+        || ui_state == const_types::UiState::State202SureEveryEpisode
+        || ui_state == const_types::UiState::State301WaitForPopErrorClose
+        || ui_state == const_types::UiState::State501Help
     {
         return true;
     }

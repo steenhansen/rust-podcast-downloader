@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_globals;
 
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
@@ -9,7 +9,7 @@ use std::sync::Mutex;
 //pub static mut SPEED_RESOURCE: u16 = 0; // for easy updating from DownApp.fast_med_slow(0,1,2) in automonous threads
 
 pub static SPEED_RESOURCE: Lazy<Mutex<u16>> = Lazy::new(|| {
-    let fast_med_slow = consts_globals::RESOURCE_FAST;
+    let fast_med_slow = const_globals::RESOURCE_FAST;
     Mutex::new(fast_med_slow)
 });
 

@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_types;
+use crate::consts::const_types;
 use crate::dialogs::dialog_error;
 use crate::dialogs::dialog_help;
 use crate::dialogs::dialog_sure;
@@ -16,7 +16,7 @@ pub fn clicked_help(
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
-    if the_app.ui_state == consts_types::UiState::State501Help {
+    if the_app.ui_state == const_types::UiState::State501Help {
         let column = the_click.column;
         let row = the_click.row;
         let error_close_area = dialog_help::hover_help_ok_area(the_frame);
@@ -31,12 +31,12 @@ pub fn clicked_error_ok(
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
-    if the_app.ui_state == consts_types::UiState::State301WaitForPopErrorClose {
+    if the_app.ui_state == const_types::UiState::State301WaitForPopErrorClose {
         let column = the_click.column;
         let row = the_click.row;
         let error_close_area = dialog_error::hover_error_ok_area(the_frame);
         if misc_ui::rect_point_in(column, row, error_close_area) {
-            the_app.ui_state = consts_types::UiState::StateNoFocus;
+            the_app.ui_state = const_types::UiState::StateNoFocus;
         }
     }
 }
@@ -46,12 +46,12 @@ pub fn clicked_sure_yes(
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
-    if the_app.ui_state == consts_types::UiState::State201EveryEpisode {
+    if the_app.ui_state == const_types::UiState::State201EveryEpisode {
         let column = the_click.column;
         let row = the_click.row;
         let error_close_area = dialog_sure::hover_sure_yes_area(the_frame);
         if misc_ui::rect_point_in(column, row, error_close_area) {
-            the_app.ui_state = consts_types::UiState::State202SureEveryEpisode;
+            the_app.ui_state = const_types::UiState::State202SureEveryEpisode;
         }
     }
 }
@@ -61,12 +61,12 @@ pub fn clicked_sure_no(
     the_click: MouseEvent,
     the_frame: &mut Frame,
 ) -> () {
-    if the_app.ui_state == consts_types::UiState::State201EveryEpisode {
+    if the_app.ui_state == const_types::UiState::State201EveryEpisode {
         let column = the_click.column;
         let row = the_click.row;
         let error_close_area = dialog_sure::hover_sure_no_area(the_frame);
         if misc_ui::rect_point_in(column, row, error_close_area) {
-            the_app.ui_state = consts_types::UiState::State103ShowEpisodes;
+            the_app.ui_state = const_types::UiState::State103ShowEpisodes;
         }
     }
 }

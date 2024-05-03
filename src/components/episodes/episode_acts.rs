@@ -1,8 +1,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
+use crate::consts::const_areas;
+use crate::consts::const_globals;
 use crate::media::media_threads;
 use crate::misc::misc_ui;
 use crate::state::state_app;
@@ -15,8 +15,8 @@ use ratatui::widgets::*;
 pub fn rect_episode(console_frame: &mut Frame) -> Rect {
     let area_frame = console_frame.size();
     let elastic_episodes_area = Rect {
-        x: consts_areas::START_X_EPISODE,
-        y: consts_areas::START_Y_EPISODE,
+        x: const_areas::START_X_EPISODE,
+        y: const_areas::START_Y_EPISODE,
         width: area_frame.width - 10,
         height: area_frame.height - 9,
     };
@@ -38,7 +38,7 @@ pub fn acts_episode_hover(
 }
 
 pub fn acts_episode_hover_index(episode_index: usize, the_app: &state_app::DownApp) -> i32 {
-    let mut acts_episode_hover_id: i32 = consts_globals::NO_EPISODES_HOVER;
+    let mut acts_episode_hover_id: i32 = const_globals::NO_EPISODES_HOVER;
     let index_i32 = episode_index as i32;
     let episode_cur_top_row = the_app.scrolled_episodes_pos as i32;
     let singed_index = index_i32 + 1 - episode_cur_top_row;
@@ -58,7 +58,7 @@ pub fn acts_episode_click(the_app: &mut state_app::DownApp, acts_episode_click: 
         let current_row = acts_episode_click.row as usize;
         let m_ev_kind = acts_episode_click.kind;
         if misc_ui::left_click(m_ev_kind) {
-            let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
+            let chunk_start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
             let the_offset = scroll_offest_epi + current_row - chunk_start_y_podcast - 1;
             let the_choice = &the_app.ordered_episodes[the_offset];
             let sel_podcast = the_app.selected_podcast.to_string();

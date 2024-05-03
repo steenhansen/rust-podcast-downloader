@@ -1,7 +1,7 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_colors;
 use crate::misc::misc_ui;
 use crate::state::state_app;
 
@@ -30,9 +30,9 @@ pub fn quit_render(
     spinner: Color,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
-    let mut the_style = Style::default().fg(consts_globals::BTN_X_BORDER_READY);
+    let mut the_style = Style::default().fg(const_colors::BTN_X_BORDER_READY);
     if the_app.hover_element == state_app::HOVER_X_QUIT {
-        the_style = Style::default().fg(consts_globals::BTN_X_BORDER_HOVER);
+        the_style = Style::default().fg(const_colors::BTN_X_BORDER_HOVER);
     }
     let paragraph = Block::default().borders(Borders::ALL).style(the_style);
     console_frame.render_widget(paragraph, area_safe);

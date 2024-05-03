@@ -1,9 +1,9 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_areas;
+use crate::consts::const_colors;
+use crate::consts::const_types;
 use crate::dialogs::dialog_render;
 use crate::misc::misc_ui;
 use crate::state::state_app;
@@ -13,7 +13,7 @@ use ratatui::{prelude::*, widgets::*};
 use thousands::Separable;
 
 pub fn sure_render(console_frame: &mut Frame, the_app: &state_app::DownApp) {
-    if the_app.ui_state == consts_types::UiState::State201EveryEpisode {
+    if the_app.ui_state == const_types::UiState::State201EveryEpisode {
         let mut download_bytes: i64 = 0;
         for (media_name, chunks_length) in &the_app.episode_2_len {
             if !the_app.local_episode_files.contains_key(media_name) {
@@ -42,12 +42,12 @@ pub fn ok_draw_disk_space(
 ) {
     let area = console_frame.size();
 
-    let mut border_color = consts_globals::FOCUS_NOT;
+    let mut border_color = const_colors::FOCUS_NOT;
     if the_app.hover_element == state_app::HOVER_SURE_DIALOG
         || the_app.hover_element == state_app::HOVER_SURE_YES
         || the_app.hover_element == state_app::HOVER_SURE_NO
     {
-        border_color = consts_globals::FOCUS_HOVER;
+        border_color = const_colors::FOCUS_HOVER;
     }
 
     let paragraph = Paragraph::new(a_message)
@@ -55,7 +55,7 @@ pub fn ok_draw_disk_space(
         .block(
             dialog_render::dialog_block("Download every episodes in this podcast").fg(border_color),
         );
-    let help_size = consts_areas::DIALOG_SURE_AREA;
+    let help_size = const_areas::DIALOG_SURE_AREA;
     let centered_area = dialog_render::dialog_centered(help_size, area);
     console_frame.render_widget(Clear, centered_area);
     console_frame.render_widget(paragraph, centered_area);
@@ -81,20 +81,20 @@ pub fn ok_draw_disk_space(
 
 pub fn hover_sure_yes_area(console_frame: &mut Frame) -> Rect {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::DIALOG_SURE_AREA;
+    let help_size = const_areas::DIALOG_SURE_AREA;
     let help_centered = dialog_render::dialog_centered(help_size, frame_area);
 
-    let ok_area = consts_areas::DIALOG_SURE_YES;
+    let ok_area = const_areas::DIALOG_SURE_YES;
     let ok_centered_area = dialog_render::ok_centered(ok_area, help_centered);
     ok_centered_area
 }
 
 pub fn hover_sure_no_area(console_frame: &mut Frame) -> Rect {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::DIALOG_SURE_AREA;
+    let help_size = const_areas::DIALOG_SURE_AREA;
     let help_centered = dialog_render::dialog_centered(help_size, frame_area);
 
-    let ok_area = consts_areas::DIALOG_SURE_NO;
+    let ok_area = const_areas::DIALOG_SURE_NO;
     let ok_centered_area = dialog_render::ok_centered(ok_area, help_centered);
     ok_centered_area
 }
@@ -105,7 +105,7 @@ pub fn sure_hover(
     hover_event: MouseEvent,
 ) {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::HELP_SIZE_AREA;
+    let help_size = const_areas::HELP_SIZE_AREA;
     let help_centered = dialog_render::dialog_centered(help_size, frame_area);
 
     let column = hover_event.column;

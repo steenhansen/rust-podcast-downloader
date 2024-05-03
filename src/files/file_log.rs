@@ -11,7 +11,6 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
     Handle,
 };
-
 use std::fs::File;
 use std::io::Write;
 

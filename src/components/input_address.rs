@@ -1,9 +1,9 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_areas;
+use crate::consts::const_colors;
+use crate::consts::const_types;
 use crate::dialogs::dialog_render;
 use crate::misc::misc_ui;
 use crate::state::state_app;
@@ -19,18 +19,19 @@ pub fn address_show(
     app_dim: bool,
     is_downloading_paused: bool,
 ) {
-    let mut wait_color = consts_globals::NORMAL_BORDER_COL;
+    let mut wait_color = const_colors::NORMAL_BORDER_COL;
     if is_downloading_paused {
-        wait_color = consts_globals::PAUSE_COLOR;
+        wait_color = const_colors::PAUSE_COLOR;
     } else if app_dim {
-        wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+        wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
     }
 
     address_render(
         console_frame,
-        consts_areas::NEW_URL_AREA,
+        const_areas::NEW_URL_AREA,
         the_app,
-        "New Podcast URL─https://www.nasa.gov/feeds/iotd-feed",
+        "New Podcast URL      ",
+        "https://www.nasa.gov/feeds/iotd-feed",
         wait_color,
     );
 }
@@ -40,7 +41,7 @@ pub fn address_show(
 pub fn address_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;
-    if misc_ui::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
+    if misc_ui::rect_point_in(column, row, const_areas::NEW_URL_AREA) {
         the_app.hover_element = state_app::HOVER_NEW_URL.to_string();
     }
 }
@@ -48,8 +49,8 @@ pub fn address_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) 
 pub fn address_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) {
     let column = the_click.column;
     let row = the_click.row;
-    if misc_ui::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
-        the_app.ui_state = consts_types::UiState::State001NewPodcastUrl;
+    if misc_ui::rect_point_in(column, row, const_areas::NEW_URL_AREA) {
+        the_app.ui_state = const_types::UiState::State001NewPodcastUrl;
     }
 }
 
@@ -58,19 +59,20 @@ pub fn address_render(
     draw_area: Rect,
     the_app: &mut state_app::DownApp,
     box_title: &str,
+    example_text: &str,
     wait_color: Color,
 ) {
     let area_safe = draw_area.intersection(console_frame.size());
     let draw_name = the_app.new_podcast_url.clone();
-    let is_edit = the_app.ui_state == consts_types::UiState::State001NewPodcastUrl;
+    let is_edit = the_app.ui_state == const_types::UiState::State001NewPodcastUrl;
     let has_chars = draw_name.len() > 0;
     let mut url_color = wait_color;
 
     if wait_color == Color::Reset {
         if is_edit || has_chars || the_app.hover_element == state_app::HOVER_NEW_URL {
-            url_color = consts_globals::INPUT_TEXT_HOVER
+            url_color = const_colors::INPUT_TEXT_HOVER
         } else {
-            url_color = consts_globals::INPUT_TEXT_READY
+            url_color = const_colors::INPUT_TEXT_READY
         }
     }
 
@@ -78,6 +80,7 @@ pub fn address_render(
         area_safe,
         console_frame,
         box_title,
+        example_text,
         draw_name,
         url_color,
         is_edit,

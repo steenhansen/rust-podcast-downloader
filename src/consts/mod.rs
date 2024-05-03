@@ -1,3 +1,4 @@
-pub mod consts_areas;
-pub mod consts_globals;
-pub mod consts_types;
+pub mod const_areas;
+pub mod const_colors;
+pub mod const_globals;
+pub mod const_types;

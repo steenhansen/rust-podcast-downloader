@@ -9,6 +9,7 @@ pub const NEW_NAME_AREA: ratatui::layout::Rect = Rect {
     width: 30,
     height: 3,
 };
+pub const MAX_NAME_WIDTH: u16 = NEW_NAME_AREA.width - 3;
 
 pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
     x: 0,
@@ -16,6 +17,7 @@ pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
     width: 54,
     height: 3,
 };
+pub const MAX_URL_WIDTH: u16 = NEW_URL_AREA.width - 3;
 
 pub const NEW_PODCAST_AREA: ratatui::layout::Rect = Rect {
     x: 31,
@@ -50,7 +52,7 @@ pub const RESOURCE_Y_START: u16 = 1;
 pub const RESOURCE_AREA: ratatui::layout::Rect = Rect {
     x: 74,
     y: RESOURCE_Y_START,
-    width: 24,
+    width: 16,
     height: 5,
 };
 

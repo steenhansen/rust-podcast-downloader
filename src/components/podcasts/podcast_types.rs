@@ -3,8 +3,9 @@ use log::{debug, info, trace, warn};
 
 use crate::components::podcasts::podcast_happenings;
 use crate::components::podcasts::podcast_paint;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_colors;
+use crate::consts::const_globals;
+use crate::consts::const_types;
 use crate::state::state_app;
 
 use ratatui::prelude::*;
@@ -22,11 +23,11 @@ pub fn types_state_of_podcasts(
     is_downloading_paused: bool,
 ) {
     let elastic_pod_area = podcast_paint::paint_podcast_area(console_frame);
-    let mut wait_color = consts_globals::NORMAL_BORDER_COL;
+    let mut wait_color = const_colors::NORMAL_BORDER_COL;
     if is_downloading_paused {
-        wait_color = consts_globals::PAUSE_COLOR;
+        wait_color = const_colors::PAUSE_COLOR;
     } else if app_dim {
-        wait_color = consts_globals::DIMMED_BACKGROUND_WAIT;
+        wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
     }
     podcast_paint::paint_pod_list(
         console_frame,
@@ -48,7 +49,7 @@ pub fn types_read_podcast_dir(root_dir: &str) -> HashMap<String, String> {
             let my_str = the_path.as_path().display().to_string();
             let pod_name: String = my_str.chars().skip(2).collect();
             let rss_file_path =
-                format!("{}{}/{}", root_dir, pod_name, consts_globals::RSS_TEXT_FILE);
+                format!("{}{}/{}", root_dir, pod_name, const_globals::RSS_TEXT_FILE);
             if Path::new(&rss_file_path).is_file() {
                 let mut file_handle = File::open(&rss_file_path).expect("file-open-err");
                 let mut pod_url = String::new();
@@ -64,13 +65,13 @@ pub fn types_read_podcast_dir(root_dir: &str) -> HashMap<String, String> {
 
 fn types_create_new_podcast(new_podcast_name: &str, contents_url: &str) -> Result<(), io::Error> {
     fs::create_dir(new_podcast_name).expect("create-dir-err");
-    let f_name = format!("{}/{}", new_podcast_name, consts_globals::RSS_TEXT_FILE);
+    let f_name = format!("{}/{}", new_podcast_name, const_globals::RSS_TEXT_FILE);
     fs::write(f_name, contents_url).expect("create-new-write-err");
     Ok(())
 }
 
 pub fn types_create_pod_dir(the_app: &mut state_app::DownApp) -> Result<(), io::Error> {
-    the_app.ui_state = consts_types::UiState::StateNoFocus;
+    the_app.ui_state = const_types::UiState::StateNoFocus;
     types_create_new_podcast(&the_app.new_podcast_name, &the_app.new_podcast_url)
         .expect("make-dir-err");
     the_app.new_podcast_name = String::from("");
@@ -80,7 +81,7 @@ pub fn types_create_pod_dir(the_app: &mut state_app::DownApp) -> Result<(), io::
 }
 
 pub fn types_dirs_of_podcasts(the_app: &mut state_app::DownApp) {
-    let unordered_podcasts = types_read_podcast_dir(consts_globals::ROOT_DIR);
+    let unordered_podcasts = types_read_podcast_dir(const_globals::ROOT_DIR);
     the_app.ordered_podcasts = <HashMap<String, String> as Clone>::clone(&unordered_podcasts)
         .into_iter()
         .map(|(p_name, _p_url)| p_name)

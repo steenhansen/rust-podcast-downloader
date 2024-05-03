@@ -1,24 +1,23 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_globals;
 use crate::files::file_log;
 
 use crossterm::style::Print;
-use ratatui::prelude::*;
-use std::io::{self, stdout, Stdout};
-
 use crossterm::{
     event::{DisableMouseCapture, EnableMouseCapture},
     execute,
     terminal::*,
 };
+use ratatui::prelude::*;
+use std::io::{self, stdout, Stdout};
 
 pub type TuiTerm = Terminal<CrosstermBackend<Stdout>>;
 
 pub fn tui_init(debug_file: &str) -> io::Result<TuiTerm> {
     let _handle = file_log::log_initialize(debug_file);
-    execute!(stdout(), Print(consts_globals::CLEAR_SCREEN)).expect("print-err");
+    execute!(stdout(), Print(const_globals::CLEAR_SCREEN)).expect("print-err");
 
     enable_raw_mode().expect("tui-enter-raw-err");
     execute!(stdout(), EnterAlternateScreen).expect("tui-enter-alternate-err");

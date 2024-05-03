@@ -1,7 +1,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_areas;
+use crate::consts::const_areas;
+
 use ratatui::layout::Rect;
 
 pub fn rect_point_in(px: u16, py: u16, a_rect: Rect) -> bool {
@@ -61,7 +62,7 @@ pub fn below_podcasts(
     let row = mouse_event.row as usize;
     let visible_podcasts = sorted_len - scrolled_podcasts_pos;
 
-    let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
+    let chunk_start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
 
     let last_podcast_y = chunk_start_y_podcast + visible_podcasts;
     if row > last_podcast_y {
@@ -78,7 +79,7 @@ pub fn below_episodes(
     let row = mouse_event.row as usize;
     let visible_episodes = sorted_len - scrolled_episodes_pos;
 
-    let chunk_start_y_episode: usize = consts_areas::START_Y_EPISODE as usize;
+    let chunk_start_y_episode: usize = const_areas::START_Y_EPISODE as usize;
 
     let last_episode_y = chunk_start_y_episode + visible_episodes;
     if row > last_episode_y {

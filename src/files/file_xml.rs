@@ -1,8 +1,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
-use crate::consts::consts_types::*;
+use crate::consts::const_globals;
+use crate::consts::const_types::*;
 use crate::misc::misc_fun;
 
 use regex::Regex;
@@ -97,7 +97,7 @@ fn xml_search_image_tag(the_text: String) -> String {
     //  <  href="http://www.artinnaturephotography.com/images/xl/salt-point-california-coast-20210808_0229.jpg"  >
     //  <  src='https://photojournal.jpl.nasa.gov/thumb/PIA26312.jpg'  >
     //    let first_jpeg = Regex::new(r####"=('|")[^"]*.jpg("|')"####)
-    let first_jpeg = Regex::new(consts_globals::FIND_PICTURES).expect("bad-image-regex-err");
+    let first_jpeg = Regex::new(const_globals::FIND_PICTURES).expect("bad-image-regex-err");
 
     let possible_jpeg = first_jpeg.find(the_text.as_str());
     match possible_jpeg {

@@ -2,9 +2,9 @@
 use log::{debug, info, trace, warn};
 
 use crate::components::podcasts::podcast_paint;
-use crate::consts::consts_areas;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_areas;
+use crate::consts::const_globals;
+use crate::consts::const_types;
 use crate::globals::g_active;
 use crate::misc::misc_ui;
 use crate::state::state_app;
@@ -46,7 +46,7 @@ pub fn happening_happening_clicked_podcasts(
     episode_index: usize,
     the_app: &state_app::DownApp,
 ) -> i32 {
-    let mut happening_podcast_hover_id: i32 = consts_globals::NO_PODCASTS_HOVER;
+    let mut happening_podcast_hover_id: i32 = const_globals::NO_PODCASTS_HOVER;
     let index_i32 = episode_index as i32;
     let podcast_cur_top_row = the_app.scrolled_podcasts_pos as i32;
     let singed_index = index_i32 + 1 - podcast_cur_top_row;
@@ -80,16 +80,16 @@ pub fn happening_podcast_click(the_app: &mut state_app::DownApp, mouse_event: Mo
         let row = mouse_event.row as usize;
         let m_ev_kind = mouse_event.kind;
         if misc_ui::left_click(m_ev_kind) {
-            let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
+            let chunk_start_y_podcast: usize = const_areas::START_Y_PODCAST as usize;
             let the_offset = scroll_offest_pod + row - chunk_start_y_podcast - 1;
             let the_choice = &the_app.ordered_podcasts[the_offset];
 
             the_app.selected_podcast = the_choice.to_string();
-            the_app.ui_state = consts_types::UiState::State101ReadingRss;
+            the_app.ui_state = const_types::UiState::State101ReadingRss;
             // qbert - possible wrongness
             g_active::active_clear(); // clear all others ??? when switch?
             return;
         }
     }
-    the_app.selected_podcast = consts_globals::BLANK_PODCAST.to_string();
+    the_app.selected_podcast = const_globals::BLANK_PODCAST.to_string();
 }

@@ -2,8 +2,8 @@
 use log::{debug, info, trace, warn};
 
 use crate::components::episodes::episode_case;
-use crate::consts::consts_globals;
-use crate::consts::consts_types;
+use crate::consts::const_colors;
+use crate::consts::const_types;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
@@ -35,9 +35,9 @@ pub fn display_render_epi_list(
     let mut episode_border_color = wait_color;
     if wait_color == Color::Reset {
         if the_app.hover_element == state_app::HOVER_EPISODES {
-            episode_border_color = consts_globals::EPISODES_HOVER;
+            episode_border_color = const_colors::EPISODES_HOVER;
         } else {
-            episode_border_color = consts_globals::EPISODES_READY;
+            episode_border_color = const_colors::EPISODES_READY;
         }
     }
 
@@ -57,26 +57,24 @@ pub fn display_display_render_epi_list_empty(
     console_frame: &mut Frame,
     draw_area: Rect,
     the_app: &mut state_app::DownApp,
-    _box_title: String,
     wait_color: Color,
 ) {
     let episode_title = format!("{}", the_app.selected_podcast);
     let episode_text_color = match wait_color {
-        Color::Reset => consts_globals::EPISODE_LOADING,
+        Color::Reset => const_colors::EPISODE_LOADING,
         _ => wait_color,
     };
     let ui_state = the_app.ui_state;
 
     let waiting_mess: String;
-    if ui_state == consts_types::UiState::State101ReadingRss
-        || ui_state == consts_types::UiState::State102ShowWaiting
+    if ui_state == const_types::UiState::State101ReadingRss
+        || ui_state == const_types::UiState::State102ShowWaiting
     {
         waiting_mess = "loading...".to_owned();
-    } else if ui_state == consts_types::UiState::State601KillingDownloads {
+    } else if ui_state == const_types::UiState::State601KillingDownloads {
         waiting_mess = "killing...".to_owned();
     } else {
-        waiting_mess = "UNKOWN...".to_owned();
-        warn!("unk nku {:?}", ui_state);
+        waiting_mess = "".to_owned();
     }
 
     let loading_files = Span::styled(waiting_mess, Style::default().fg(episode_text_color));
@@ -84,7 +82,7 @@ pub fn display_display_render_epi_list_empty(
 
     let area_safe = draw_area.intersection(console_frame.size());
     let episode_border_color = match wait_color {
-        Color::Reset => consts_globals::EPISODES_READY,
+        Color::Reset => const_colors::EPISODES_READY,
         _ => wait_color,
     };
     the_app.state_scroll_podcasts = the_app

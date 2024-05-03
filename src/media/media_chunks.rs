@@ -2,12 +2,11 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::consts_globals;
+use crate::consts::const_globals;
 use crate::globals::g_active;
-use crate::globals::g_pause;
-use crate::globals::g_speed;
 use crate::globals::g_stop;
 use crate::media::media_range;
+use crate::media::media_threads;
 
 use reqwest::blocking::Client;
 use reqwest::header::HeaderValue;
@@ -19,8 +18,6 @@ use std::error;
 use std::fs;
 use std::fs::File;
 use std::str::FromStr;
-use std::thread;
-use std::time::Duration;
 
 pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
     let episodes_dir = format!("{}{}", "./", selected_podcast);
@@ -33,7 +30,7 @@ pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
             match &the_path.file_name() {
                 Some(local_file) => {
                     let real_file_str = local_file.to_str().expect("episode-dir-fname-err");
-                    if real_file_str != consts_globals::RSS_TEXT_FILE {
+                    if real_file_str != const_globals::RSS_TEXT_FILE {
                         let k_real_file = String::from(real_file_str);
                         let v_real_file = String::from(real_file_str);
                         local_episodes.insert(k_real_file, v_real_file);
@@ -74,15 +71,15 @@ pub fn chunks_read(
     url_episode: String,
 ) -> Result<bool, Box<dyn error::Error>> {
     let local_file = format!("{}/{}", sel_podcast, file_name);
-    g_active::active_change(&local_file, consts_globals::BYTE_COUNT_INIT);
+    g_active::active_change(&local_file, const_globals::BYTE_COUNT_INIT);
     let len_media = chunks_length(&url_episode);
     let file_size = match len_media {
         Ok(len_media) => len_media,
         Err(_e) => 350_000_000, // one billion bytes if no known size
     };
     let client = reqwest::blocking::Client::new();
-    let chunk_size = consts_globals::CHUNK_SIZE;
-    g_active::active_change(&local_file, consts_globals::BYTE_COUNT_START);
+    let chunk_size = const_globals::CHUNK_SIZE;
+    g_active::active_change(&local_file, const_globals::BYTE_COUNT_START);
     let finished_downloading = chunks_media(file_size, chunk_size, client, url_episode, local_file)
         .expect("chunked-file-err");
     Ok(finished_downloading)
@@ -95,7 +92,7 @@ pub fn chunks_media(
     url_episode: String,
     local_file: String,
 ) -> Result<bool, Box<dyn error::Error>> {
-    let working_file = local_file.clone() + consts_globals::WORKING_FILE;
+    let working_file = local_file.clone() + const_globals::WORKING_FILE;
     let mut output_file = match File::create(&working_file) {
         Ok(output_file) => output_file,
         Err(e) => return Err(Box::new(e)),
@@ -108,13 +105,13 @@ pub fn chunks_media(
             fs::remove_file(working_file).expect("remove-killed-downloading");
             return Ok(false);
         }
-        while chunks_sleep() {}
+        while media_threads::chunks_sleep() {}
         chunk_index += 1;
         let byte_count = chunk_size * chunk_index;
         let mut response_chunk = match client
             .get(&url_episode)
             .header(RANGE, &file_section)
-            .timeout(consts_globals::CHUNK_TIMEOUT)
+            .timeout(const_globals::CHUNK_TIMEOUT)
             .send()
         {
             Ok(the_response) => the_response,
@@ -138,18 +135,4 @@ pub fn chunks_media(
 
     let finished_downloading = g_active::active_remove(&local_file);
     Ok(finished_downloading)
-}
-
-fn chunks_sleep() -> bool {
-    let cur_speed = g_speed::speed_get();
-    match cur_speed {
-        0 => (),
-        1 => thread::sleep(Duration::from_secs(consts_globals::SLEEP_SEC_MED)),
-        _ => thread::sleep(Duration::from_secs(consts_globals::SLEEP_SEC_SLOW)),
-    }
-    let currently_paused = g_pause::pause_currently();
-    if currently_paused {
-        thread::sleep(Duration::from_secs(consts_globals::PAUSE_SLEEP_SEC));
-    }
-    currently_paused
 }
