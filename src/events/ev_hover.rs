@@ -1,29 +1,25 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::components::btn_every;
-use crate::components::btn_new;
-use crate::components::btn_quit;
-use crate::components::btn_stop;
+use crate::components::buttons::*;
 use crate::components::checkbox_pause;
+use crate::components::episodes::episode_acts;
 use crate::components::input_address;
 use crate::components::input_name;
-use crate::consts::area_rects;
-use crate::state::app_state;
-
+use crate::components::podcasts::podcast_happenings;
 use crate::components::radio_resource;
-use crate::episodes::episode_event;
-
-use crate::podcasts::podcast_event;
+use crate::consts::consts_types;
+use crate::dialogs::*;
+use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
 use ratatui::prelude::*;
 
-pub fn do_hovers(the_frame: &mut Frame, the_app: &mut app_state::DownApp, hover_event: MouseEvent) {
-    let column = hover_event.column;
-    let row = hover_event.row;
+pub fn hover_ui(the_frame: &mut Frame, the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
+    // let column = hover_event.column;
+    // let row = hover_event.row;
 
-    the_app.hover_element = app_state::HOVER_NONE.to_string();
+    the_app.hover_element = state_app::HOVER_NONE.to_string();
 
     btn_new::new_hover(the_app, hover_event);
     btn_every::every_hover(the_app, hover_event);
@@ -33,22 +29,30 @@ pub fn do_hovers(the_frame: &mut Frame, the_app: &mut app_state::DownApp, hover_
     radio_resource::resources_hover(the_app, hover_event);
     input_address::address_hover(the_app, hover_event);
     input_name::name_hover(the_app, hover_event);
-    episode_event::episode_hover(the_frame, the_app, hover_event);
-    podcast_event::podcast_hover(the_frame, the_app, hover_event);
+    episode_acts::acts_episode_hover(the_frame, the_app, hover_event);
+    podcast_happenings::happening_podcast_hover(the_frame, the_app, hover_event);
 
-    let dialog_ok_area = area_rects::ok_dialog_area(the_frame);
-    if area_rects::point_in_rect(column, row, dialog_ok_area) {
-        the_app.hover_element = app_state::HOVER_OK_DIALOG.to_string();
-        the_app.podcast_hover_row = (row - dialog_ok_area.y) as usize;
+    if the_app.ui_state == consts_types::UiState::State501Help {
+        dialog_help::help_hover(the_frame, the_app, hover_event);
     }
 
-    let yes_sure_area = area_rects::yes_are_sure_dialog_area(the_frame);
-    if area_rects::point_in_rect(column, row, yes_sure_area) {
-        the_app.hover_element = app_state::HOVER_YES_SURE.to_string();
+    // if the_app.ui_state == consts_types::UiState::State301WaitForPopErrorClose {
+    //     let yes_sure_area = consts_rects::rect_error_ok(the_frame);
+    //     if consts_rects::rect_point_in(column, row, yes_sure_area) {
+    //         the_app.hover_element = state_app::HOVER_YES_SURE.to_string();
+    //     }
+    if the_app.ui_state == consts_types::UiState::State301WaitForPopErrorClose {
+        dialog_error::error_hover(the_frame, the_app, hover_event);
     }
+    //     // let dialog_ok_area = consts_rects::rect_ok_dialog(the_frame);
+    //     //    ERRORS done by this also
+    //     // if consts_rects::rect_point_in(column, row, dialog_ok_area) {
+    //     //     the_app.hover_element = state_app::HOVER_OK_DIALOG.to_string();
+    //     //     the_app.happening_podcast_hover_row = (row - dialog_ok_area.y) as usize;
+    //     // }
+    // }
 
-    let no_sure_area = area_rects::no_are_sure_dialog_area(the_frame);
-    if area_rects::point_in_rect(column, row, no_sure_area) {
-        the_app.hover_element = app_state::HOVER_NO_SURE.to_string();
+    if the_app.ui_state == consts_types::UiState::State201EveryEpisode {
+        dialog_sure::sure_hover(the_frame, the_app, hover_event);
     }
 }

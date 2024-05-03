@@ -1,2 +1,2 @@
 pub mod misc_fun;
-pub mod tui_term;
+pub mod misc_tui;

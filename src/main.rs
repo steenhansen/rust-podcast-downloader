@@ -3,24 +3,20 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-mod app_ui;
+mod app;
 
-pub mod chunks;
 pub mod components;
 pub mod consts;
 pub mod dialogs;
-pub mod episodes;
 pub mod events;
 pub mod files;
 pub mod globals;
+pub mod media;
 pub mod misc;
-pub mod podcasts;
 pub mod state;
 
 use log::LevelFilter;
-
 use ratatui::prelude::*;
-
 use std::{
     error::Error,
     io,
@@ -29,42 +25,42 @@ use std::{
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut the_terminal =
-        misc::tui_term::init(consts::const_globals::DEBUG_FILE).expect("tui-init-err");
+        misc::misc_tui::tui_init(consts::consts_globals::DEBUG_FILE).expect("tui-init-err");
 
-    files::file_log::reqwest_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
+    files::file_log::log_trace_off(LevelFilter::Info); // this stops all Debug & Trace logging from ReQwest
 
     let tick_rate = Duration::from_millis(100);
-    let mut app = state::app_state::DownApp::default();
+    let mut app = state::state_app::DownApp::default();
 
-    app.hover_element = state::app_state::HOVER_NONE.to_string();
+    app.hover_element = state::state_app::HOVER_NONE.to_string();
     let res = run_app(&mut the_terminal, app, tick_rate);
-    misc::tui_term::restore(the_terminal, res).expect("tui-restore-err");
+    misc::misc_tui::tui_restore(the_terminal, res).expect("tui-tui_restore-err");
     Ok(())
 }
 
 fn run_app<B: Backend>(
     the_terminal: &mut Terminal<B>,
-    mut the_app: state::app_state::DownApp,
+    mut the_app: state::state_app::DownApp,
     tick_rate: Duration,
 ) -> io::Result<()> {
     let mut last_tick = Instant::now();
-    podcasts::podcast_state::get_dirs_of_podcasts(&mut the_app);
+    components::podcasts::podcast_types::types_dirs_of_podcasts(&mut the_app);
 
     loop {
         the_terminal
-            .draw(|f| app_ui::draw_ui(f, &mut the_app))
+            .draw(|f| app::draw_ui(f, &mut the_app))
             .expect("tui-draw-err");
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
         if crossterm::event::poll(timeout).expect("tui-poll-err") {
             let mut the_frame = the_terminal.get_frame();
-            let finish = events::ev_all::all_events_done(&mut the_frame, &mut the_app);
+            let finish = events::ev_all::all_events(&mut the_frame, &mut the_app);
             if finish {
                 return Ok(());
             }
         }
-        state::state_reify::change_app_state_type(&mut the_app);
-        chunks::episode_threads::check_start_down(&mut the_app);
+        state::state_reify::reify_type(&mut the_app);
+        media::media_threads::threads_limit(&mut the_app);
         if last_tick.elapsed() >= tick_rate {
             last_tick = Instant::now();
         }

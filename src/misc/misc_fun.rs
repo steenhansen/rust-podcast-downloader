@@ -1,8 +1,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::consts::areas_consts;
-use crate::consts::const_globals;
+use crate::consts::consts_areas;
+use crate::consts::consts_globals;
 
 use crossterm::event::{
     KeyCode, KeyEvent, KeyModifiers, MouseButton::Left, MouseEvent, MouseEventKind,
@@ -20,7 +20,7 @@ pub fn epi_prefix_num(episode_index: usize) -> String {
     let str_index = format!(
         "{:0prefix_digits$}",
         episode_index,
-        prefix_digits = const_globals::PREFIX_NUM_DIGITS
+        prefix_digits = consts_globals::PREFIX_NUM_DIGITS
     );
     str_index //0001_first_podcast
 }
@@ -60,7 +60,7 @@ pub fn below_podcasts(
     let row = mouse_event.row as usize;
     let visible_podcasts = sorted_len - scrolled_podcasts_pos;
 
-    let chunk_start_y_podcast: usize = areas_consts::START_Y_PODCAST as usize;
+    let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
 
     let last_podcast_y = chunk_start_y_podcast + visible_podcasts;
     if row > last_podcast_y {
@@ -77,7 +77,7 @@ pub fn below_episodes(
     let row = mouse_event.row as usize;
     let visible_episodes = sorted_len - scrolled_episodes_pos;
 
-    let chunk_start_y_episode: usize = areas_consts::START_Y_EPISODE as usize;
+    let chunk_start_y_episode: usize = consts_areas::START_Y_EPISODE as usize;
 
     let last_episode_y = chunk_start_y_episode + visible_episodes;
     if row > last_episode_y {
@@ -87,15 +87,15 @@ pub fn below_episodes(
 }
 
 pub fn clean_title(actual_title: String) -> String {
-    let only_alpha = Regex::new(const_globals::ONLY_ALPHA_REGX).expect("only-alpha-regex-err");
+    let only_alpha = Regex::new(consts_globals::ONLY_ALPHA_REGX).expect("only-alpha-regex-err");
     let multi_spaces =
-        Regex::new(const_globals::MULTI_SPACES_REGX).expect("multi-spaces-regex-err");
+        Regex::new(consts_globals::MULTI_SPACES_REGX).expect("multi-spaces-regex-err");
 
     let title_change = actual_title.as_str();
-    let title_cow = only_alpha.replace_all(title_change, const_globals::REPLACE_TO_SPACE);
+    let title_cow = only_alpha.replace_all(title_change, consts_globals::REPLACE_TO_SPACE);
     let spaced_title = title_cow.to_string();
     let trimmed_title = spaced_title.trim();
-    let multi_spaces = multi_spaces.replace_all(trimmed_title, const_globals::REPLACE_TO_SPACE);
+    let multi_spaces = multi_spaces.replace_all(trimmed_title, consts_globals::REPLACE_TO_SPACE);
     let solo_blank_title = multi_spaces.to_string();
     let dashed_title = solo_blank_title.replace(" ", "-");
     dashed_title

@@ -1,4 +1,4 @@
-pub mod area_rects;
-pub mod areas_consts;
-pub mod const_globals;
-pub mod the_types;
+pub mod consts_areas;
+pub mod consts_globals;
+pub mod consts_rects;
+pub mod consts_types;

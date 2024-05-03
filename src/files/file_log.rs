@@ -15,7 +15,7 @@ use log4rs::{
 use std::fs::File;
 use std::io::Write;
 
-pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
+pub fn log_initialize(file_path: &str) -> Result<Handle, SetLoggerError> {
     let mut clear_log = File::create(file_path).expect("log-create-err");
     clear_log.write_all(b"").expect("log-clear-err");
 
@@ -47,6 +47,6 @@ pub fn do_log(file_path: &str) -> Result<Handle, SetLoggerError> {
     _handle
 }
 
-pub fn reqwest_trace_off(level_filter: LevelFilter) {
+pub fn log_trace_off(level_filter: LevelFilter) {
     log::set_max_level(level_filter);
 }

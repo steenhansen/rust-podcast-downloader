@@ -1,2 +1,2 @@
 pub mod file_log;
-pub mod rss_xml;
+pub mod file_xml;
