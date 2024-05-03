@@ -13,7 +13,7 @@ pub const NEW_NAME_AREA: ratatui::layout::Rect = Rect {
 pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
     x: 0,
     y: 4,
-    width: 53,
+    width: 54,
     height: 3,
 };
 
@@ -32,7 +32,7 @@ pub const EVERY_EPISODE_AREA: ratatui::layout::Rect = Rect {
 };
 
 pub const STOP_PODCAST_AREA: ratatui::layout::Rect = Rect {
-    x: 54,
+    x: 55,
     y: 5,
     width: 18,
     height: 3,
@@ -67,13 +67,13 @@ pub const MIN_FEED_X_START: i16 = 30; //  https://www.nasa.gov/feeds/iotd-feed
 pub const HELP_SIZE_AREA: ratatui::layout::Rect = Rect {
     x: 0,
     y: 0,
-    width: 49,
-    height: 14,
+    width: 50,
+    height: 15,
 };
 
 pub const HELP_SIZE_OK: ratatui::layout::Rect = Rect {
     x: 0,
-    y: 10,
+    y: 11,
     width: 6,
     height: 3,
 };

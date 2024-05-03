@@ -63,13 +63,15 @@ pub const HOVER_NEW_NAME: &str = "HOVER-NEW-NAME";
 pub const HOVER_EPISODES: &str = "HOVER-EPISODES";
 pub const HOVER_PODCASTS: &str = "HOVER-PODCASTS";
 
-pub const HOVER_HELP_OK_DIALOG: &str = "HOVER-HELP-OK-DIALOG";
-pub const HOVER_ERROR_OK_DIALOG: &str = "HOVER-ERROR-OK-DIALOG";
+pub const HOVER_HELP_DIALOG: &str = "HOVER-HELP-DIALOG";
+pub const HOVER_HELP_OK: &str = "HOVER-HELP-OK";
 
-pub const HOVER_OK_DIALOG: &str = "HOVER-OK-DIALOG";
+pub const HOVER_ERROR_DIALOG: &str = "HOVER-ERROR-DIALOG";
+pub const HOVER_ERROR_OK: &str = "HOVER-ERROR-OK";
 
-pub const HOVER_YES_SURE: &str = "HOVER-YES-SURE";
-pub const HOVER_NO_SURE: &str = "HOVER-NO-SURE";
+pub const HOVER_SURE_DIALOG: &str = "HOVER-SURE-DIALOG";
+pub const HOVER_SURE_YES: &str = "HOVER-SURE-YES";
+pub const HOVER_SURE_NO: &str = "HOVER-SURE-NO";
 
 pub fn app_dim(the_app: &DownApp) -> bool {
     let ui_state = the_app.ui_state;

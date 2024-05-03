@@ -3,9 +3,9 @@ use log::{debug, info, trace, warn};
 
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::consts::consts_types;
 use crate::dialogs::dialog_render;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -40,7 +40,7 @@ pub fn address_show(
 pub fn address_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
         the_app.hover_element = state_app::HOVER_NEW_URL.to_string();
     }
 }
@@ -48,7 +48,7 @@ pub fn address_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) 
 pub fn address_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) {
     let column = the_click.column;
     let row = the_click.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::NEW_URL_AREA) {
         the_app.ui_state = consts_types::UiState::State001NewPodcastUrl;
     }
 }

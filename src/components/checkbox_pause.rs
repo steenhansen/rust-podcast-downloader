@@ -3,10 +3,10 @@ use log::{debug, info, trace, warn};
 
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::consts::consts_types;
 use crate::globals::g_active;
 use crate::globals::g_pause;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -29,7 +29,7 @@ pub fn pause_show(console_frame: &mut Frame, the_app: &mut state_app::DownApp) {
 pub fn pause_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::PAUSE_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::PAUSE_AREA) {
         the_app.hover_element = state_app::HOVER_PAUSE.to_string();
     }
 }
@@ -47,7 +47,7 @@ pub fn pause_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) ->
         let column = the_click.column;
         let row = the_click.row;
         let pause_area = consts_areas::PAUSE_AREA;
-        if consts_rects::rect_point_in(column, row, pause_area) {
+        if misc_ui::rect_point_in(column, row, pause_area) {
             let pause_state = g_pause::pause_flip();
             if pause_state {
                 the_app.pause_type_103_203 = the_app.ui_state;

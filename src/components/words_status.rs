@@ -2,12 +2,23 @@
 use log::{debug, info, trace, warn};
 
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
+
 use crate::globals::g_active;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
 use ratatui::{prelude::*, widgets::*};
+
+pub fn rect_status(console_frame: &mut Frame) -> Rect {
+    let area_frame = console_frame.size();
+    let status_area = Rect {
+        x: 0,
+        y: area_frame.height - 1,
+        width: area_frame.width,
+        height: 1,
+    };
+    status_area
+}
 
 pub fn status_show(
     console_frame: &mut Frame,
@@ -15,7 +26,7 @@ pub fn status_show(
     app_dim: bool,
     is_downloading_paused: bool,
 ) {
-    let status_area = consts_rects::rect_status(console_frame);
+    let status_area = rect_status(console_frame);
     let mut wait_color = consts_globals::NORMAL_BORDER_COL;
     if is_downloading_paused {
         wait_color = consts_globals::PAUSE_COLOR;

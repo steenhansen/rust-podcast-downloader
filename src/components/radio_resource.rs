@@ -3,8 +3,8 @@ use log::{debug, info, trace, warn};
 
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::globals::g_speed;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -36,7 +36,7 @@ pub fn resources_show(
 pub fn resources_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::RESOURCE_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::RESOURCE_AREA) {
         the_app.hover_element = state_app::HOVER_RESOURCES.to_string();
     }
 }
@@ -44,7 +44,7 @@ pub fn resources_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent
 pub fn resources_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) -> () {
     let column = the_click.column;
     let row = the_click.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::RESOURCE_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::RESOURCE_AREA) {
         let speed_chosen = row - consts_areas::RESOURCE_Y_START - 1;
         the_app.fast_med_slow = speed_chosen;
         g_speed::speed_change(speed_chosen);

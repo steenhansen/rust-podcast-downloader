@@ -2,11 +2,23 @@
 use log::{debug, info, trace, warn};
 
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
 use ratatui::{prelude::*, widgets::*};
+
+pub fn rect_title(console_frame: &mut Frame, the_title: &str) -> Rect {
+    let area_frame = console_frame.size();
+    let title_width = the_title.len() as u16;
+    let left_start = (area_frame.width - title_width) / 2;
+    let up_right_area = Rect {
+        x: left_start,
+        y: 0,
+        width: title_width,
+        height: 1,
+    };
+    up_right_area
+}
 
 pub fn title_show(
     console_frame: &mut Frame,
@@ -15,7 +27,7 @@ pub fn title_show(
     is_downloading_paused: bool,
 ) {
     let the_title = "Terminal Rust Podcast Downloader";
-    let title_area = consts_rects::rect_title(console_frame, the_title);
+    let title_area = rect_title(console_frame, the_title);
     let mut wait_color = consts_globals::TITLE_COLOR;
     if is_downloading_paused {
         wait_color = consts_globals::PAUSE_COLOR;

@@ -2,12 +2,28 @@
 use log::{debug, info, trace, warn};
 
 use crate::components::podcasts::podcast_directory;
+use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::state::state_app;
 
 use ratatui::layout::Rect;
 use ratatui::{prelude::*, widgets::*};
+
+pub fn rect_feed(console_frame: &mut Frame, the_url: &str) -> Rect {
+    let area_frame = console_frame.size();
+    let url_width = the_url.len() as u16;
+    let mut left_start: i16 = area_frame.width as i16 - url_width as i16;
+    if left_start < consts_areas::MIN_FEED_X_START {
+        left_start = consts_areas::MIN_FEED_X_START;
+    }
+    let up_right_area = Rect {
+        x: left_start as u16,
+        y: area_frame.height - 1,
+        width: url_width,
+        height: 1,
+    };
+    up_right_area
+}
 
 pub fn feed_show(
     console_frame: &mut Frame,
@@ -19,7 +35,7 @@ pub fn feed_show(
     if podcast_name != "" {
         let rss_feed = podcast_directory::directory_get_filename(podcast_name);
 
-        let address_area = consts_rects::rect_feed(console_frame, &rss_feed);
+        let address_area = rect_feed(console_frame, &rss_feed);
         let mut wait_color = consts_globals::NORMAL_BORDER_COL;
         if is_downloading_paused {
             wait_color = consts_globals::PAUSE_COLOR;

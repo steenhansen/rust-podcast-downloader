@@ -2,11 +2,10 @@
 use log::{debug, info, trace, warn};
 
 use crate::consts::consts_areas;
-
-use crate::consts::consts_rects;
+use crate::consts::consts_globals;
 use crate::consts::consts_types;
 use crate::dialogs::dialog_render;
-
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -42,10 +41,19 @@ pub fn ok_draw_disk_space(
     a_message: String,
 ) {
     let area = console_frame.size();
+
+    let mut border_color = consts_globals::FOCUS_NOT;
+    if the_app.hover_element == state_app::HOVER_SURE_DIALOG
+        || the_app.hover_element == state_app::HOVER_SURE_YES
+        || the_app.hover_element == state_app::HOVER_SURE_NO
+    {
+        border_color = consts_globals::FOCUS_HOVER;
+    }
+
     let paragraph = Paragraph::new(a_message)
-        .style(Style::default().fg(Color::White))
+        .style(Style::default().fg(border_color))
         .block(
-            dialog_render::dialog_block("Download every episodes in this podcast").fg(Color::White),
+            dialog_render::dialog_block("Download every episodes in this podcast").fg(border_color),
         );
     let help_size = consts_areas::DIALOG_SURE_AREA;
     let centered_area = dialog_render::dialog_centered(help_size, area);
@@ -56,7 +64,7 @@ pub fn ok_draw_disk_space(
     let hover_element = the_app.hover_element.clone();
     let the_paragraph = dialog_render::dialog_yes_no(
         hover_element,
-        state_app::HOVER_YES_SURE.to_string(),
+        state_app::HOVER_SURE_YES.to_string(),
         "\n  Yes",
     );
     console_frame.render_widget(the_paragraph, area_yes);
@@ -65,7 +73,7 @@ pub fn ok_draw_disk_space(
     let hover_element = the_app.hover_element.clone();
     let the_paragraph = dialog_render::dialog_yes_no(
         hover_element,
-        state_app::HOVER_NO_SURE.to_string(),
+        state_app::HOVER_SURE_NO.to_string(),
         "\n  No",
     );
     console_frame.render_widget(the_paragraph, area_no);
@@ -96,20 +104,29 @@ pub fn sure_hover(
     the_app: &mut state_app::DownApp,
     hover_event: MouseEvent,
 ) {
-    let hover_help_ok_area = hover_sure_yes_area(console_frame);
+    let frame_area = console_frame.size();
+    let help_size = consts_areas::HELP_SIZE_AREA;
+    let help_centered = dialog_render::dialog_centered(help_size, frame_area);
+
     let column = hover_event.column;
     let row = hover_event.row;
+    if misc_ui::rect_point_in(column, row, help_centered) {
+        the_app.hover_element = state_app::HOVER_SURE_DIALOG.to_string();
 
-    if consts_rects::rect_point_in(column, row, hover_help_ok_area) {
-        the_app.hover_element = state_app::HOVER_YES_SURE.to_string();
-    }
+        let hover_help_ok_area = hover_sure_yes_area(console_frame);
+        let column = hover_event.column;
+        let row = hover_event.row;
 
-    ////////////
-    let hover_help_no_area = hover_sure_no_area(console_frame);
-    let column = hover_event.column;
-    let row = hover_event.row;
+        if misc_ui::rect_point_in(column, row, hover_help_ok_area) {
+            the_app.hover_element = state_app::HOVER_SURE_YES.to_string();
+        }
 
-    if consts_rects::rect_point_in(column, row, hover_help_no_area) {
-        the_app.hover_element = state_app::HOVER_NO_SURE.to_string();
+        let hover_help_no_area = hover_sure_no_area(console_frame);
+        let column = hover_event.column;
+        let row = hover_event.row;
+
+        if misc_ui::rect_point_in(column, row, hover_help_no_area) {
+            the_app.hover_element = state_app::HOVER_SURE_NO.to_string();
+        }
     }
 }

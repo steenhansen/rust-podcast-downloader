@@ -4,10 +4,9 @@ use log::{debug, info, trace, warn};
 use crate::components::podcasts::podcast_paint;
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::consts::consts_types;
 use crate::globals::g_active;
-use crate::misc::misc_fun;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -22,7 +21,7 @@ pub fn happening_podcast_hover(
     let column = hover_event.column;
     let row = hover_event.row;
     let podcast_area = podcast_paint::paint_podcast_area(the_frame);
-    if consts_rects::rect_point_in(column, row, podcast_area) {
+    if misc_ui::rect_point_in(column, row, podcast_area) {
         the_app.hover_element = state_app::HOVER_PODCASTS.to_string();
         the_app.happening_podcast_hover_row = (row - podcast_area.y) as usize;
     }
@@ -67,7 +66,7 @@ pub fn happening_clicked_podcasts(
     let row = the_click.row;
     let podcast_area = podcast_paint::paint_podcast_area(the_frame);
     let click_on_title = row == podcast_area.y;
-    if consts_rects::rect_point_in(column, row, podcast_area) && !click_on_title {
+    if misc_ui::rect_point_in(column, row, podcast_area) && !click_on_title {
         // NB - ignore click on title
         happening_podcast_click(the_app, the_click);
     }
@@ -76,11 +75,11 @@ pub fn happening_clicked_podcasts(
 pub fn happening_podcast_click(the_app: &mut state_app::DownApp, mouse_event: MouseEvent) -> () {
     let scroll_offest_pod = the_app.scrolled_podcasts_pos;
     let num_podcasts = the_app.ordered_podcasts.len();
-    let is_below_last = misc_fun::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
+    let is_below_last = misc_ui::below_podcasts(mouse_event, scroll_offest_pod, num_podcasts);
     if !is_below_last {
         let row = mouse_event.row as usize;
         let m_ev_kind = mouse_event.kind;
-        if misc_fun::left_click(m_ev_kind) {
+        if misc_ui::left_click(m_ev_kind) {
             let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
             let the_offset = scroll_offest_pod + row - chunk_start_y_podcast - 1;
             let the_choice = &the_app.ordered_podcasts[the_offset];

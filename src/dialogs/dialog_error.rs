@@ -1,13 +1,11 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
-use crate::dialogs::dialog_render;
-
 use crate::consts::consts_areas;
-
-use crate::consts::consts_rects;
+use crate::consts::consts_globals;
 use crate::consts::consts_types;
-
+use crate::dialogs::dialog_render;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -22,11 +20,19 @@ pub fn error_render(console_frame: &mut Frame, the_app: &state_app::DownApp) {
 
 pub fn ok_draw_error(console_frame: &mut Frame, the_app: &state_app::DownApp, a_message: String) {
     let area = console_frame.size();
+
+    let mut border_color = consts_globals::FOCUS_NOT;
+    if the_app.hover_element == state_app::HOVER_ERROR_DIALOG
+        || the_app.hover_element == state_app::HOVER_ERROR_OK
+    {
+        border_color = consts_globals::FOCUS_HOVER;
+    }
+
     let paragraph = Paragraph::new(a_message)
-        .style(Style::default().fg(Color::White))
-        .block(dialog_render::dialog_block("My Error").fg(Color::White));
-    let help_size = consts_areas::ERROR_SIZE_AREA;
-    let centered_area = dialog_render::dialog_centered(help_size, area);
+        .style(Style::default().fg(border_color))
+        .block(dialog_render::dialog_block("My Error").fg(border_color));
+    let error_size = consts_areas::ERROR_SIZE_AREA;
+    let centered_area = dialog_render::dialog_centered(error_size, area);
     console_frame.render_widget(Clear, centered_area);
     console_frame.render_widget(paragraph, centered_area);
 
@@ -34,7 +40,7 @@ pub fn ok_draw_error(console_frame: &mut Frame, the_app: &state_app::DownApp, a_
     let hover_element = the_app.hover_element.clone();
     let the_paragraph = dialog_render::dialog_yes_no(
         hover_element,
-        state_app::HOVER_ERROR_OK_DIALOG.to_string(),
+        state_app::HOVER_ERROR_OK.to_string(),
         "\n  Ok",
     );
     console_frame.render_widget(the_paragraph, area_ok);
@@ -42,11 +48,11 @@ pub fn ok_draw_error(console_frame: &mut Frame, the_app: &state_app::DownApp, a_
 
 pub fn hover_error_ok_area(console_frame: &mut Frame) -> Rect {
     let frame_area = console_frame.size();
-    let help_size = consts_areas::ERROR_SIZE_AREA;
-    let help_centered = dialog_render::dialog_centered(help_size, frame_area);
+    let error_size = consts_areas::ERROR_SIZE_AREA;
+    let error_centered = dialog_render::dialog_centered(error_size, frame_area);
 
     let ok_area = consts_areas::ERROR_SIZE_OK;
-    let ok_centered_area = dialog_render::ok_centered(ok_area, help_centered);
+    let ok_centered_area = dialog_render::ok_centered(ok_area, error_centered);
     ok_centered_area
 }
 
@@ -55,11 +61,19 @@ pub fn error_hover(
     the_app: &mut state_app::DownApp,
     hover_event: MouseEvent,
 ) {
-    let hover_error_ok_area = hover_error_ok_area(console_frame);
+    let frame_area = console_frame.size();
+    let error_size = consts_areas::ERROR_SIZE_AREA;
+    let error_centered = dialog_render::dialog_centered(error_size, frame_area);
+
     let column = hover_event.column;
     let row = hover_event.row;
 
-    if consts_rects::rect_point_in(column, row, hover_error_ok_area) {
-        the_app.hover_element = state_app::HOVER_ERROR_OK_DIALOG.to_string();
+    if misc_ui::rect_point_in(column, row, error_centered) {
+        the_app.hover_element = state_app::HOVER_ERROR_DIALOG.to_string();
+
+        let area_ok = hover_error_ok_area(console_frame);
+        if misc_ui::rect_point_in(column, row, area_ok) {
+            the_app.hover_element = state_app::HOVER_ERROR_OK.to_string();
+        }
     }
 }

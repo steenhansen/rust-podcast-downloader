@@ -118,8 +118,8 @@ pub fn chunks_media(
             .send()
         {
             Ok(the_response) => the_response,
-            Err(e) => {
-                warn!("eeeeeeeeeeeeeeeeeeeeef {:?}", e);
+            Err(_e) => {
+                //warn!("eeeeeeeeeeeeeeeeeeeeef {:?}", _e);
                 return Ok(false);
                 //return Err(Box::new(e));
             }

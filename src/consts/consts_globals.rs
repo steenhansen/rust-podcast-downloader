@@ -127,3 +127,6 @@ pub const ON_WAITLIST: Color = Color::Blue;
 pub const BLANK_PODCAST: &str = "";
 
 pub const PAGE_SIZE: usize = 25;
+
+pub const FOCUS_HOVER: Color = Color::White;
+pub const FOCUS_NOT: Color = Color::Gray;

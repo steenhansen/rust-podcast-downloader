@@ -2,7 +2,7 @@
 use log::{debug, info, trace, warn};
 
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -18,7 +18,7 @@ pub fn quit_hover(
     let column = hover_event.column;
     let row = hover_event.row;
     let quit_area = quit_area(the_frame);
-    if consts_rects::rect_point_in(column, row, quit_area) {
+    if misc_ui::rect_point_in(column, row, quit_area) {
         the_app.hover_element = state_app::HOVER_X_QUIT.to_string();
     }
 }
@@ -57,7 +57,7 @@ pub fn quit_clicked(the_click: MouseEvent, the_frame: &mut Frame) -> bool {
     let column = the_click.column;
     let row = the_click.row;
     let quit_area = quit_area(the_frame);
-    if consts_rects::rect_point_in(column, row, quit_area) {
+    if misc_ui::rect_point_in(column, row, quit_area) {
         return true;
     }
     false

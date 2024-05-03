@@ -3,11 +3,12 @@ use log::{debug, info, trace, warn};
 
 use crate::components::input_address;
 use crate::components::input_name;
+use crate::components::podcasts::podcast_contents;
 use crate::components::podcasts::podcast_types;
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::consts::consts_types;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
@@ -41,7 +42,7 @@ pub fn new_show(
 pub fn new_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;
-    if consts_rects::rect_point_in(column, row, consts_areas::NEW_PODCAST_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::NEW_PODCAST_AREA) {
         the_app.hover_element = state_app::HOVER_BTN_NEW.to_string();
     }
 }
@@ -51,10 +52,19 @@ pub fn new_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) {
     let row = the_click.row;
     input_name::name_clicked(the_app, the_click);
     input_address::address_clicked(the_app, the_click);
-    if consts_rects::rect_point_in(column, row, consts_areas::NEW_PODCAST_AREA) {
+    if misc_ui::rect_point_in(column, row, consts_areas::NEW_PODCAST_AREA) {
         if new_btn_active(the_app) {
-            podcast_types::types_create_pod_dir(the_app).expect("create-dir-err");
-            the_app.ui_state = consts_types::UiState::State003ClickedNew;
+            let new_rss_feed = &the_app.new_podcast_url;
+            let _test_titles_urls = match podcast_contents::validate_rss(&new_rss_feed) {
+                Ok(_titles_urls) => {
+                    podcast_types::types_create_pod_dir(the_app).expect("create-dir-err");
+                    the_app.ui_state = consts_types::UiState::State003ClickedNew;
+                }
+                Err(the_error) => {
+                    the_app.ui_state = consts_types::UiState::State301WaitForPopErrorClose;
+                    the_app.cur_error = the_error; //e.to_string();
+                }
+            };
         }
     }
 }

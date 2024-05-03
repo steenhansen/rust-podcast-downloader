@@ -10,23 +10,34 @@ use crate::state::state_app;
 use std::collections::HashMap;
 use std::error;
 
+pub fn validate_rss(rss_feed: &str) -> Result<Vec<EpisodeMetadataTuple>, String> {
+    let rss_xml = match podcast_directory::directory_read_rss(&rss_feed) {
+        Ok(the_rss) => the_rss,
+        Err(_e) => {
+            let bad_url_err = format!("\n Error - {:?} is not valid URL", &rss_feed);
+            return Err(bad_url_err);
+        }
+    };
+
+    match file_xml::xml_dirty_titles_urls(rss_xml) {
+        Ok(titles_urls) => return Ok(titles_urls),
+        Err(_e) => {
+            let bad_xml_err = format!("\n Error - {:?} is not valid XML", &rss_feed);
+            return Err(bad_xml_err);
+        }
+    };
+}
+
 pub fn contents_episode_list(
     the_app: &mut state_app::DownApp,
 ) -> Result<(), Box<dyn error::Error>> {
     podcast_directory::directory_erase(the_app);
-    let rss_feed = podcast_directory::directory_get_filename(the_app.selected_podcast.clone());
-    let an_string = match podcast_directory::directory_read_rss(&rss_feed) {
-        Ok(an_string) => an_string,
-        Err(_e) => {
-            let bad_url_err = format!("\n Error - {:?} is not valid URL", &rss_feed);
-            return Err(bad_url_err.into());
-        }
-    };
-    let neg_titles_urls = match file_xml::xml_dirty_titles_urls(an_string) {
+    let podcast_rss_url = the_app.selected_podcast.clone();
+    let rss_feed = podcast_directory::directory_get_filename(podcast_rss_url);
+    let neg_titles_urls = match validate_rss(&rss_feed) {
         Ok(v) => v,
-        Err(_e) => {
-            let bad_xml_err = format!("\n Error - {:?} is not valid XML", &rss_feed);
-            return Err(bad_xml_err.into());
+        Err(the_error) => {
+            return Err(the_error.into());
         }
     };
     contents_clear_podcast_data(the_app);

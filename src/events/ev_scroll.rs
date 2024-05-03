@@ -1,8 +1,9 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
+use crate::components::episodes::episode_acts;
 use crate::components::podcasts::podcast_paint;
-use crate::consts::consts_rects;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::{MouseEvent, MouseEventKind};
@@ -16,11 +17,11 @@ pub fn scroll_lists(
     let column = scroll_event.column;
     let row = scroll_event.row;
     let podcast_area = podcast_paint::paint_podcast_area(console_frame);
-    if consts_rects::rect_point_in(column, row, podcast_area) {
+    if misc_ui::rect_point_in(column, row, podcast_area) {
         scroll_podcasts(the_app, scroll_event);
     }
-    let elastic_epi_area = consts_rects::rect_episode(console_frame);
-    if consts_rects::rect_point_in(column, row, elastic_epi_area) {
+    let elastic_epi_area = episode_acts::rect_episode(console_frame);
+    if misc_ui::rect_point_in(column, row, elastic_epi_area) {
         scroll_episodes(the_app, scroll_event);
     }
 }

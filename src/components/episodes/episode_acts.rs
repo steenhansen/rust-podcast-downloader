@@ -3,15 +3,25 @@ use log::{debug, info, trace, warn};
 
 use crate::consts::consts_areas;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
 use crate::media::media_threads;
-use crate::misc::misc_fun;
+use crate::misc::misc_ui;
 use crate::state::state_app;
 
 use crossterm::event::MouseEvent;
 use ratatui::layout::Rect;
 use ratatui::prelude::*;
 use ratatui::widgets::*;
+
+pub fn rect_episode(console_frame: &mut Frame) -> Rect {
+    let area_frame = console_frame.size();
+    let elastic_episodes_area = Rect {
+        x: consts_areas::START_X_EPISODE,
+        y: consts_areas::START_Y_EPISODE,
+        width: area_frame.width - 10,
+        height: area_frame.height - 9,
+    };
+    elastic_episodes_area
+}
 
 pub fn acts_episode_hover(
     the_frame: &mut Frame,
@@ -20,8 +30,8 @@ pub fn acts_episode_hover(
 ) {
     let column = hover_event.column;
     let row = hover_event.row;
-    let episode_area = consts_rects::rect_episode(the_frame);
-    if consts_rects::rect_point_in(column, row, episode_area) {
+    let episode_area = rect_episode(the_frame);
+    if misc_ui::rect_point_in(column, row, episode_area) {
         the_app.hover_element = state_app::HOVER_EPISODES.to_string();
         the_app.acts_episode_hover_row = (row - episode_area.y) as usize;
     }
@@ -43,11 +53,11 @@ pub fn acts_episode_click(the_app: &mut state_app::DownApp, acts_episode_click: 
     let scroll_offest_epi = the_app.scrolled_episodes_pos;
     let num_episodes = the_app.ordered_episodes.len();
     let is_below_last =
-        misc_fun::below_episodes(acts_episode_click, scroll_offest_epi, num_episodes);
+        misc_ui::below_episodes(acts_episode_click, scroll_offest_epi, num_episodes);
     if !is_below_last {
         let current_row = acts_episode_click.row as usize;
         let m_ev_kind = acts_episode_click.kind;
-        if misc_fun::left_click(m_ev_kind) {
+        if misc_ui::left_click(m_ev_kind) {
             let chunk_start_y_podcast: usize = consts_areas::START_Y_PODCAST as usize;
             let the_offset = scroll_offest_epi + current_row - chunk_start_y_podcast - 1;
             let the_choice = &the_app.ordered_episodes[the_offset];
@@ -68,9 +78,9 @@ pub fn acts_clicked_episodes(
 ) -> () {
     let column = the_click.column;
     let row = the_click.row;
-    let episode_area = consts_rects::rect_episode(the_frame);
+    let episode_area = rect_episode(the_frame);
     let click_on_title = row == episode_area.y;
-    if consts_rects::rect_point_in(column, row, episode_area) && !click_on_title {
+    if misc_ui::rect_point_in(column, row, episode_area) && !click_on_title {
         // NB - ignore click on title
         acts_episode_click(the_app, the_click);
     }

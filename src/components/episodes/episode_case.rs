@@ -5,7 +5,7 @@ use crate::components::episodes::episode_acts;
 use crate::components::episodes::episode_colors;
 use crate::components::episodes::episode_display;
 use crate::consts::consts_globals;
-use crate::consts::consts_rects;
+
 use crate::consts::consts_types;
 use crate::globals::g_active;
 use crate::state::state_app;
@@ -20,7 +20,7 @@ pub fn case_state_of_episodes(
     is_downloading_paused: bool,
 ) {
     if the_app.selected_podcast != "" {
-        let elastic_epi_area = consts_rects::rect_episode(console_frame);
+        let elastic_epi_area = episode_acts::rect_episode(console_frame);
         let mut wait_color = consts_globals::NORMAL_BORDER_COL;
         if is_downloading_paused {
             wait_color = consts_globals::PAUSE_COLOR;
