@@ -2,6 +2,7 @@
 use log::{debug, info, trace, warn};
 
 use crate::components::podcasts::podcast_directory;
+use crate::consts::const_globals;
 use crate::consts::const_types::*;
 use crate::files::file_xml;
 use crate::misc::misc_fun;
@@ -9,6 +10,42 @@ use crate::state::state_app;
 
 use std::collections::HashMap;
 use std::error;
+use std::fs;
+
+fn save_media_type(the_app: &mut state_app::DownApp, file_dot_type: &String) {
+    let selected_podcast = the_app.selected_podcast.clone();
+    let f_name = format!("{}/{}", selected_podcast, const_globals::MEDIA_TEXT_FILE);
+    let file_type = misc_fun::file_type_real(file_dot_type.to_string());
+    fs::write(f_name, &file_type).expect("create-new-write-err-media");
+    the_app
+        .podcast_file_types
+        .insert(selected_podcast, file_type);
+}
+
+fn contents_slurp_data(
+    the_app: &mut state_app::DownApp,
+    neg_titles_urls: Vec<EpisodeMetadataTuple>,
+) {
+    let pos_titles_urls = file_xml::xml_clean_titles_urls(neg_titles_urls);
+    let mut have_saved_type = false;
+    for title_and_url in &pos_titles_urls {
+        let (pod_index, actual_title, actual_url, actual_len) = title_and_url;
+        let mut file_dot_type = contents_file_with_type(actual_title, actual_url);
+        if !have_saved_type {
+            save_media_type(the_app, &file_dot_type);
+            have_saved_type = true;
+        }
+        file_dot_type = contents_add_working(file_dot_type, pod_index);
+        the_app.ordered_episodes.push(file_dot_type.clone());
+        the_app
+            .episode_2_url
+            .insert(file_dot_type.clone(), actual_url.clone());
+
+        the_app
+            .episode_2_len
+            .insert(file_dot_type.clone(), *actual_len);
+    }
+}
 
 pub fn validate_rss(rss_feed: &str) -> Result<Vec<EpisodeMetadataTuple>, String> {
     let rss_xml = match podcast_directory::directory_read_rss(&rss_feed) {
@@ -48,26 +85,6 @@ pub fn contents_episode_list(
         .content_length(the_app.ordered_episodes.len());
 
     Ok(())
-}
-
-fn contents_slurp_data(
-    the_app: &mut state_app::DownApp,
-    neg_titles_urls: Vec<EpisodeMetadataTuple>,
-) {
-    let pos_titles_urls = file_xml::xml_clean_titles_urls(neg_titles_urls);
-    for title_and_url in &pos_titles_urls {
-        let (pod_index, actual_title, actual_url, actual_len) = title_and_url;
-        let mut file_dot_type = contents_file_with_type(actual_title, actual_url);
-        file_dot_type = contents_add_working(file_dot_type, pod_index);
-        the_app.ordered_episodes.push(file_dot_type.clone());
-        the_app
-            .episode_2_url
-            .insert(file_dot_type.clone(), actual_url.clone());
-
-        the_app
-            .episode_2_len
-            .insert(file_dot_type.clone(), *actual_len);
-    }
 }
 
 fn contents_clear_podcast_data(the_app: &mut state_app::DownApp) {

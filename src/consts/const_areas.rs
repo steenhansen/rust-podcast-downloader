@@ -17,7 +17,8 @@ pub const NEW_URL_AREA: ratatui::layout::Rect = Rect {
     width: 54,
     height: 3,
 };
-pub const MAX_URL_WIDTH: u16 = NEW_URL_AREA.width - 3;
+
+pub const MAX_URL_WIDTH: u16 = 333;
 
 pub const NEW_PODCAST_AREA: ratatui::layout::Rect = Rect {
     x: 31,

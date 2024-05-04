@@ -30,7 +30,9 @@ pub fn read_episode_dir(selected_podcast: &str) -> HashMap<String, String> {
             match &the_path.file_name() {
                 Some(local_file) => {
                     let real_file_str = local_file.to_str().expect("episode-dir-fname-err");
-                    if real_file_str != const_globals::RSS_TEXT_FILE {
+                    if real_file_str != const_globals::RSS_TEXT_FILE
+                        && real_file_str != const_globals::MEDIA_TEXT_FILE
+                    {
                         let k_real_file = String::from(real_file_str);
                         let v_real_file = String::from(real_file_str);
                         local_episodes.insert(k_real_file, v_real_file);

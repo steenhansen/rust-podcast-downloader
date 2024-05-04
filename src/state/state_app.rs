@@ -42,6 +42,7 @@ pub struct DownApp {
     pub happening_podcast_hover_row: usize,
     pub pause_type_103_203: UiState, // when pause either State103ShowEpisodes or State203DownloadingEvery
     pub pause_help: UiState,
+    pub podcast_file_types: HashMap<PodcastName, String>,
 }
 
 //

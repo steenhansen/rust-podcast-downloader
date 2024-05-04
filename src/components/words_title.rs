@@ -10,7 +10,10 @@ use ratatui::{prelude::*, widgets::*};
 pub fn rect_title(console_frame: &mut Frame, the_title: &str) -> Rect {
     let area_frame = console_frame.size();
     let title_width = the_title.len() as u16;
-    let left_start = (area_frame.width - title_width) / 2;
+    let mut left_start = 0;
+    if area_frame.width > title_width {
+        left_start = (area_frame.width - title_width) / 2;
+    }
     let up_right_area = Rect {
         x: left_start,
         y: 0,
@@ -34,13 +37,7 @@ pub fn title_show(
     } else if app_dim {
         wait_color = const_colors::DIMMED_BACKGROUND_WAIT;
     }
-    title_render(
-        console_frame,
-        title_area,
-        the_app,
-        "Terminal Rust Podcast Downloader",
-        wait_color,
-    );
+    title_render(console_frame, title_area, the_app, the_title, wait_color);
 }
 
 pub fn title_render(

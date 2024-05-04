@@ -3,6 +3,8 @@
 #[allow(unused)]
 use log::{debug, info, trace, warn};
 
+use crate::consts::const_globals;
+
 pub mod app;
 pub mod components;
 pub mod consts;
@@ -16,12 +18,12 @@ pub mod state;
 
 use log::LevelFilter;
 use ratatui::prelude::*;
+
 use std::{
     error::Error,
     io,
     time::{Duration, Instant},
 };
-
 fn main() -> Result<(), Box<dyn Error>> {
     let mut the_terminal =
         misc::misc_tui::tui_init(consts::const_globals::DEBUG_FILE).expect("tui-init-err");
@@ -43,21 +45,31 @@ fn run_app<B: Backend>(
     tick_rate: Duration,
 ) -> io::Result<()> {
     let mut last_tick = Instant::now();
-    components::podcasts::podcast_types::types_dirs_of_podcasts(&mut the_app);
+    components::podcasts::podcast_media::media_sorted_podcasts(&mut the_app);
+    the_app.podcast_file_types =
+        components::podcasts::podcast_media::media_file_types(const_globals::ROOT_DIR);
 
     loop {
-        the_terminal
-            .draw(|f| app::draw_ui(f, &mut the_app))
-            .expect("tui-draw-err");
+        match the_terminal.draw(|f| app::draw_ui(f, &mut the_app)) {
+            Ok(_complete_frame) => {}
+            Err(e) => warn!(" aaaa1111 {:?}", e),
+        }
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
-        if crossterm::event::poll(timeout).expect("tui-poll-err") {
-            let mut the_frame = the_terminal.get_frame();
-            let finish = events::ev_all::all_events(&mut the_frame, &mut the_app);
-            if finish {
-                return Ok(());
+
+        match crossterm::event::poll(timeout) {
+            Ok(is_a_timeout) => {
+                if is_a_timeout {
+                    let mut the_frame = the_terminal.get_frame();
+                    let finish = events::ev_all::all_events(&mut the_frame, &mut the_app);
+                    if finish {
+                        return Ok(());
+                    }
+                }
             }
+            Err(e) => warn!(" bbb22 {:?}", e),
         }
+
         state::state_reify::reify_type(&mut the_app);
         media::media_threads::threads_limit(&mut the_app);
         if last_tick.elapsed() >= tick_rate {

@@ -4,7 +4,7 @@ use log::{debug, info, trace, warn};
 use crate::components::input_address;
 use crate::components::input_name;
 use crate::components::podcasts::podcast_contents;
-use crate::components::podcasts::podcast_types;
+use crate::components::podcasts::podcast_media;
 use crate::consts::const_areas;
 use crate::consts::const_colors;
 use crate::consts::const_types;
@@ -57,7 +57,7 @@ pub fn new_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) {
             let new_rss_feed = &the_app.new_podcast_url;
             let _test_titles_urls = match podcast_contents::validate_rss(&new_rss_feed) {
                 Ok(_titles_urls) => {
-                    podcast_types::types_create_pod_dir(the_app).expect("create-dir-err");
+                    podcast_media::media_create_dir(the_app).expect("create-dir-err");
                     the_app.ui_state = const_types::UiState::State003ClickedNew;
                 }
                 Err(the_error) => {

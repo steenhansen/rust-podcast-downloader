@@ -21,9 +21,10 @@ pub const DOWN_BYTES_STOPPED: &str = "DOWN-BYTES-KILLED";
 pub const DOWN_BYTES_INITL_SHOW: &str = "       ";
 pub const DOWN_BYTES_START_SHOW: &str = "0000000";
 
-pub const DEBUG_FILE: &str = "debug_log.txt";
+pub const DEBUG_FILE: &str = "DEBUG_log.txt";
 
-pub const RSS_TEXT_FILE: &str = "podcast_address.rss";
+pub const RSS_TEXT_FILE: &str = "zzzz-podcast_address.rss";
+pub const MEDIA_TEXT_FILE: &str = "zzzz-podcast_type.rss";
 
 pub const REPLACE_TO_SPACE: &str = " ";
 

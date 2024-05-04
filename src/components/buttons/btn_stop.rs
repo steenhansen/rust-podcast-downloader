@@ -68,10 +68,10 @@ pub fn stop_render(
     } else if stop_active(the_app) {
         if the_app.hover_element == state_app::HOVER_BTN_STOP {
             stop_text_color = const_colors::BTN_EVERY_TEXT_HOVER;
-            stop_background_color = const_colors::BTN_EVERY_BACK_HOVER;
+            stop_background_color = Color::LightRed;
         } else {
             stop_text_color = const_colors::BTN_EVERY_TEXT_READY;
-            stop_background_color = const_colors::BTN_EVERY_BACK_READY;
+            stop_background_color = Color::Red;
         }
     }
     let text_style = Style::default().fg(stop_text_color);

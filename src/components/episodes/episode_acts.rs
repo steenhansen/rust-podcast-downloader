@@ -14,11 +14,21 @@ use ratatui::widgets::*;
 
 pub fn rect_episode(console_frame: &mut Frame) -> Rect {
     let area_frame = console_frame.size();
+    let mut start_left = 0;
+    if area_frame.width > 10 {
+        start_left = area_frame.width - 10;
+    }
+
+    let mut start_top = 0;
+    if area_frame.height > 10 {
+        start_top = area_frame.height - 10;
+    }
+
     let elastic_episodes_area = Rect {
         x: const_areas::START_X_EPISODE,
         y: const_areas::START_Y_EPISODE,
-        width: area_frame.width - 10,
-        height: area_frame.height - 9,
+        width: start_left,
+        height: start_top,
     };
     elastic_episodes_area
 }

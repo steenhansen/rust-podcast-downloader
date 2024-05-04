@@ -29,6 +29,7 @@ pub fn render_box(
 
     let area_safe = draw_area.intersection(console_frame.size());
     let span2 = Span::styled(the_example, Style::new().fg(Color::DarkGray)).to_right_aligned_line();
+
     console_frame.render_widget(span2, area_safe);
 
     if is_edit {

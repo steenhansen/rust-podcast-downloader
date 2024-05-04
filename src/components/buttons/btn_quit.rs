@@ -83,8 +83,14 @@ pub fn quit_show(console_frame: &mut Frame, the_app: &mut state_app::DownApp) {
 
 pub fn quit_area(console_frame: &mut Frame) -> Rect {
     let area_frame = console_frame.size();
+
+    let mut quit_left = 0;
+    if area_frame.width > 5 {
+        quit_left = area_frame.width - 5;
+    }
+
     let up_right_area = Rect {
-        x: area_frame.width - 5,
+        x: quit_left,
         y: 0,
         width: 5,
         height: 3,

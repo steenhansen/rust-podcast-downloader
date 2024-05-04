@@ -75,7 +75,6 @@ pub fn address_render(
             url_color = const_colors::INPUT_TEXT_READY
         }
     }
-
     dialog_render::render_box(
         area_safe,
         console_frame,

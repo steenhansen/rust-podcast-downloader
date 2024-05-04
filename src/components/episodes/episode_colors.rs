@@ -7,6 +7,14 @@ use crate::consts::const_globals;
 use ratatui::prelude::*;
 use std::collections::HashMap;
 
+pub const CAN_DOWNLOAD_EPISODE: Color = Color::Green;
+pub const WAITING_EPISODE: Color = Color::Green;
+pub const JUST_GOT_EPISODE: Color = Color::Cyan;
+pub const ACTIVE_EPISODE: Color = Color::Magenta;
+pub const START_EPISODE_FG: Color = Color::Black;
+pub const START_EPISODE_BG: Color = Color::White;
+pub const OLD_LOCAL_EPISODE: Color = Color::DarkGray;
+
 pub fn colors_start_down_done(
     num_bytes: &str,
     episode_name: &str,
@@ -58,7 +66,7 @@ pub fn colors_hover_epi(episode_name: &str) -> Span<'static> {
 
 pub fn colors_old_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
     let old_have_color = match wait_color {
-        Color::Reset => const_colors::OLD_LOCAL_EPISODE,
+        Color::Reset => OLD_LOCAL_EPISODE,
         _ => wait_color,
     };
     let indented_old = const_globals::WAITING_FINISHED_INDENT.to_owned() + episode_name;
@@ -68,7 +76,7 @@ pub fn colors_old_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
 
 pub fn colors_finished_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
     let finished_color = match wait_color {
-        Color::Reset => const_colors::JUST_GOT_EPISODE,
+        Color::Reset => JUST_GOT_EPISODE,
         _ => wait_color,
     };
     let just_finished = const_globals::WAITING_FINISHED_INDENT.to_owned() + episode_name;
@@ -78,11 +86,11 @@ pub fn colors_finished_epi(episode_name: &str, wait_color: Color) -> Span<'stati
 
 pub fn colors_start_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
     let start_text_color = match wait_color {
-        Color::Reset => const_colors::START_EPISODE_FG,
+        Color::Reset => START_EPISODE_FG,
         _ => wait_color,
     };
     let start_back_color = match wait_color {
-        Color::Reset => const_colors::START_EPISODE_BG,
+        Color::Reset => START_EPISODE_BG,
         _ => const_colors::BLACK_WAIT,
     };
     let new_f_pos = const_globals::DOWN_BYTES_START_SHOW.to_owned() + " - " + episode_name;
@@ -99,7 +107,7 @@ pub fn colors_continue_epi(
     wait_color: Color,
 ) -> Span<'static> {
     let continue_color = match wait_color {
-        Color::Reset => const_colors::ACTIVE_EPISODE,
+        Color::Reset => ACTIVE_EPISODE,
         _ => wait_color,
     };
     let new_f_pos = num_bytes.to_owned() + " - " + episode_name;
@@ -109,7 +117,7 @@ pub fn colors_continue_epi(
 
 pub fn colors_waiting_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
     let waiting_color = match wait_color {
-        Color::Reset => const_colors::WAITING_EPISODE,
+        Color::Reset => WAITING_EPISODE,
         _ => wait_color,
     };
 
@@ -119,7 +127,7 @@ pub fn colors_waiting_epi(episode_name: &str, wait_color: Color) -> Span<'static
 
 pub fn colors_possible_epi(episode_name: &str, wait_color: Color) -> Span<'static> {
     let possible_color = match wait_color {
-        Color::Reset => const_colors::CAN_DOWNLOAD_EPISODE,
+        Color::Reset => CAN_DOWNLOAD_EPISODE,
         _ => wait_color,
     };
     let possible_file = Span::styled(episode_name.to_owned(), Style::default().fg(possible_color));

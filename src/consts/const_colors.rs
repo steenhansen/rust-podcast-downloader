@@ -1,20 +1,5 @@
 use ratatui::prelude::*;
 
-pub const OLD_LOCAL_EPISODE: Color = Color::DarkGray;
-
-pub const JUST_GOT_EPISODE: Color = Color::Cyan;
-
-pub const CAN_DOWNLOAD_EPISODE: Color = Color::Green;
-pub const WAITING_EPISODE: Color = Color::Green;
-
-pub const ACTIVE_EPISODE: Color = Color::White;
-
-pub const START_EPISODE_FG: Color = Color::Black;
-pub const START_EPISODE_BG: Color = Color::White;
-
-pub const PODCAST_SELECTED: Color = Color::White;
-pub const PODCAST_NOT_SELECTED: Color = Color::DarkGray;
-
 pub const PAUSE_COLOR: Color = Color::Yellow;
 
 pub const PAUSE_BACK_COLOR: Color = Color::Yellow;
