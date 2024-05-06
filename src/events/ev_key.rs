@@ -6,11 +6,8 @@ use crate::consts::const_globals;
 use crate::consts::const_types;
 use crate::state::state_app;
 
-use crossterm::cursor::MoveTo;
 use crossterm::event::KeyCode;
 use crossterm::event::KeyEvent;
-use crossterm::execute;
-use std::io::stdout;
 
 pub fn key_scan(the_app: &mut state_app::DownApp, key_event: KeyEvent) {
     let the_code = key_event.code;
@@ -49,8 +46,7 @@ pub fn key_scan(the_app: &mut state_app::DownApp, key_event: KeyEvent) {
     } else if the_app.ui_state == const_types::UiState::State002NewPodcastName {
         let name_max_len = const_areas::MAX_NAME_WIDTH;
         let long_name = key_edit_text(&the_app.new_podcast_name, the_code, name_max_len);
-        let trimmed_name = long_name.trim();
-        the_app.new_podcast_name = trimmed_name.to_string();
+        the_app.new_podcast_name = long_name;
     } else if the_code == KeyCode::Char('H') || the_code == KeyCode::Char('h') {
         // NB must be last so can type h into text boxes
         the_app.pause_help = the_app.ui_state;
@@ -72,11 +68,5 @@ pub fn key_edit_text(ed_text: &String, the_code: KeyCode, max_len: u16) -> Strin
         }
         _ => {}
     }
-    execute!(
-        stdout(),
-        MoveTo(13, 1),
-        crossterm::cursor::SetCursorStyle::BlinkingUnderScore
-    )
-    .expect("edit-text-err");
     ed_text2
 }
