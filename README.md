@@ -22,6 +22,6 @@ Screen capture via [ScreenToGif](https://www.screentogif.com/).
 
 TUI - Terminal User Interface with [Ratatui.rs](https://ratatui.rs/).
 
-<img src="./src/misc/git-images/ratatui-run.gif" alt="drawing" width="600"/>
+<img src="./src/misc/git-images/ratatui-run.gif" alt="drawing" width="800"/>
 
 
