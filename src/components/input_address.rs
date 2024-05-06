@@ -36,8 +36,6 @@ pub fn address_show(
     );
 }
 
-// use the word address to stop url overpopulation
-
 pub fn address_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     let column = hover_event.column;
     let row = hover_event.row;

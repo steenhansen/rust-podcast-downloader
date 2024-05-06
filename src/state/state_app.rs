@@ -45,9 +45,6 @@ pub struct DownApp {
     pub podcast_file_types: HashMap<PodcastName, String>,
 }
 
-//
-//let s = HashMap::from([(1, 2), (3, 4)]);
-
 pub const HOVER_NONE: &str = "HOVER-NONE";
 
 pub const HOVER_BTN_NEW: &str = "HOVER-BTN-NEW";

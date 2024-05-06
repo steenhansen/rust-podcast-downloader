@@ -77,7 +77,7 @@ pub fn chunks_read(
     let len_media = chunks_length(&url_episode);
     let file_size = match len_media {
         Ok(len_media) => len_media,
-        Err(_e) => 350_000_000, // one billion bytes if no known size
+        Err(_e) => 350_000_000,
     };
     let client = reqwest::blocking::Client::new();
     let chunk_size = const_globals::CHUNK_SIZE;
@@ -121,7 +121,6 @@ pub fn chunks_media(
             Ok(the_response) => the_response,
             Err(_e) => {
                 return Ok(false);
-                //return Err(Box::new(e));
             }
         };
 

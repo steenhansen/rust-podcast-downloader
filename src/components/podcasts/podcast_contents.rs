@@ -8,18 +8,16 @@ use crate::files::file_xml;
 use crate::misc::misc_fun;
 use crate::state::state_app;
 
-//use http::Uri as http_Uri;
 use std::collections::HashMap;
 use std::error;
 use std::fs;
-//use std::str::FromStr; //
 use url::Url;
 
 pub fn validate_rss(rss_feed: &str) -> Result<Vec<EpisodeMetadataTuple>, String> {
     let uri_check = Url::parse(rss_feed);
     if uri_check.is_err() {
         let bad_url_err = format!("\n Error\n   {:?} \n is not a valid URL", &rss_feed);
-        return Err(bad_url_err); // url == "malformed-uri"
+        return Err(bad_url_err);
     }
 
     let rss_xml = match podcast_directory::directory_read_rss(&rss_feed) {

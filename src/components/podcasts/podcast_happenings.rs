@@ -86,8 +86,7 @@ pub fn happening_podcast_click(the_app: &mut state_app::DownApp, mouse_event: Mo
 
             the_app.selected_podcast = the_choice.to_string();
             the_app.ui_state = const_types::UiState::State101ReadingRss;
-            // qbert - possible wrongness
-            g_active::active_clear(); // clear all others ??? when switch?
+            g_active::active_clear();
             return;
         }
     }

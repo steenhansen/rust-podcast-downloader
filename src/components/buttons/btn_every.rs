@@ -31,10 +31,6 @@ pub fn every_hover(the_app: &mut state_app::DownApp, hover_event: MouseEvent) {
     }
 }
 
-// thus when enter inputs we must remember what state we were in
-
-// no if we enter input, then we lose_focuse on episodes !!!!
-
 pub fn every_active(the_app: &mut state_app::DownApp) -> bool {
     if the_app.ui_state == const_types::UiState::State103ShowEpisodes {
         let a_podcast_is_selected = the_app.selected_podcast.len() > 0;

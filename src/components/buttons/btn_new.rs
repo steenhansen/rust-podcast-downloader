@@ -62,7 +62,7 @@ pub fn new_clicked(the_app: &mut state_app::DownApp, the_click: MouseEvent) {
                 }
                 Err(the_error) => {
                     the_app.ui_state = const_types::UiState::State301WaitForPopErrorClose;
-                    the_app.cur_error = the_error; //e.to_string();
+                    the_app.cur_error = the_error;
                 }
             };
         }

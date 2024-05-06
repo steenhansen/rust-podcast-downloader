@@ -20,7 +20,6 @@ pub fn reify_type(the_app: &mut state_app::DownApp) {
     } else if the_app.ui_state == const_types::UiState::State102ShowWaiting {
         the_app.local_episode_files = media_chunks::read_episode_dir(&the_app.selected_podcast);
 
-        // what if no podcast !!!
         match podcast_contents::contents_episode_list(the_app) {
             Ok(_v) => {
                 the_app.ui_state = const_types::UiState::State103ShowEpisodes;
@@ -47,7 +46,7 @@ pub fn reify_type(the_app: &mut state_app::DownApp) {
             g_active::active_clear();
             the_app.download_deque.clear();
             g_stop::stop_false();
-            the_app.ui_state = const_types::UiState::State103ShowEpisodes;
+            the_app.ui_state = const_types::UiState::State101ReadingRss;
         }
     }
 }

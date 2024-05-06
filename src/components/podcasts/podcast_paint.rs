@@ -67,8 +67,8 @@ pub fn paint_colored_podcasts(
             let mut podcast_back_color = Color::Black;
             if wait_color == Color::Reset {
                 if happening_podcast_hover_id >= 0 {
-                    podcast_text_color = Color::White; //const_colors::A_PODCAST_TEXT_HOVER;
-                    podcast_back_color = Color::Black; //const_colors::A_PODCAST_BACK_HOVER;
+                    podcast_text_color = Color::White;
+                    podcast_back_color = Color::Black;
                     if the_app.podcast_file_types.contains_key(&podcast_name) {
                         let lower_extension = the_app
                             .podcast_file_types

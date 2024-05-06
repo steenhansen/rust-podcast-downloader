@@ -64,9 +64,8 @@ pub const PAUSE_AREA: ratatui::layout::Rect = Rect {
     height: 1,
 };
 
-pub const MIN_FEED_X_START: i16 = 30; //  https://www.nasa.gov/feeds/iotd-feed
+pub const MIN_FEED_X_START: i16 = 30;
 
-//
 pub const HELP_SIZE_AREA: ratatui::layout::Rect = Rect {
     x: 0,
     y: 0,
