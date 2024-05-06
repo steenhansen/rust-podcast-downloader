@@ -54,7 +54,6 @@ pub fn title_render(
         .style(
             Style::default()
                 .fg(title_color)
-                //                .add_modifier(Modifier::ITALIC | Modifier::UNDERLINED),
                 .add_modifier(Modifier::ITALIC),
         );
     console_frame.render_widget(title, area_safe);

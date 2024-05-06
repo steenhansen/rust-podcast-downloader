@@ -8,10 +8,10 @@ use crate::components::input_address;
 use crate::components::input_name;
 use crate::components::podcasts::podcast_media;
 use crate::components::radio_resource;
-use crate::components::words_feed;
-use crate::components::words_larger;
-use crate::components::words_status;
-use crate::components::words_title;
+use crate::components::words::words_feed;
+use crate::components::words::words_larger;
+use crate::components::words::words_status;
+use crate::components::words::words_title;
 use crate::dialogs::dialog_error;
 use crate::dialogs::dialog_help;
 use crate::dialogs::dialog_sure;
@@ -22,8 +22,10 @@ use ratatui::prelude::*;
 
 pub fn draw_ui(console_frame: &mut Frame, the_app: &mut state_app::DownApp) {
     let console_size = console_frame.size();
-    if console_size.width < 95 || console_size.height < 13 {
-        words_larger::title_show(console_frame);
+    if console_size.width < 50 {
+        words_larger::wider_show(console_frame);
+    } else if console_size.height < 13 {
+        words_larger::taller_show(console_frame);
     } else {
         let app_dim = state_app::app_dim(the_app);
         let is_downloading_paused = g_pause::pause_currently();

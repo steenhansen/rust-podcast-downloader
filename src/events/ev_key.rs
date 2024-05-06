@@ -14,8 +14,12 @@ use std::io::stdout;
 
 pub fn key_scan(the_app: &mut state_app::DownApp, key_event: KeyEvent) {
     let the_code = key_event.code;
-    if the_code == KeyCode::Tab {
+    if the_code == KeyCode::Tab && the_app.ui_state == const_types::UiState::State001NewPodcastUrl {
         the_app.ui_state = const_types::UiState::State002NewPodcastName;
+    } else if the_code == KeyCode::Tab
+        && the_app.ui_state == const_types::UiState::State002NewPodcastName
+    {
+        the_app.ui_state = const_types::UiState::State001NewPodcastUrl;
     } else if the_code == KeyCode::PageUp {
         the_app.scrolled_episodes_pos = the_app
             .scrolled_episodes_pos

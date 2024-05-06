@@ -47,25 +47,26 @@ pub fn render_box(
 }
 
 pub fn dialog_centered(dialog_size: Rect, frame_area: Rect) -> Rect {
-    let middle_x = frame_area.width / 2 - dialog_size.width / 2;
-    let middle_y = frame_area.height / 2 - dialog_size.height / 2;
+    let middle_x = frame_area.width as i16 / 2 - dialog_size.width as i16 / 2;
+    let middle_y = frame_area.height as i16 / 2 - dialog_size.height as i16 / 2;
 
     let centered_area: ratatui::layout::Rect = Rect {
-        x: middle_x,
-        y: middle_y,
+        x: middle_x as u16,
+        y: middle_y as u16,
         width: dialog_size.width,
         height: dialog_size.height,
     };
+
     centered_area
 }
 
 pub fn ok_centered(ok_size: Rect, centered_area: Rect) -> Rect {
-    let ok_x = centered_area.x + centered_area.width / 2 - ok_size.width / 2;
-    let ok_y = centered_area.y + ok_size.y;
+    let ok_x = centered_area.x as i16 + centered_area.width as i16 / 2 - ok_size.width as i16 / 2;
+    let ok_y = centered_area.y as i16 + ok_size.y as i16;
 
     let ok_area: ratatui::layout::Rect = Rect {
-        x: ok_x,
-        y: ok_y,
+        x: ok_x as u16,
+        y: ok_y as u16,
         width: ok_size.width,
         height: ok_size.height,
     };

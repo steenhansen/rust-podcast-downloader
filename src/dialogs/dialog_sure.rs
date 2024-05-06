@@ -57,8 +57,9 @@ pub fn ok_draw_disk_space(
         );
     let help_size = const_areas::DIALOG_SURE_AREA;
     let centered_area = dialog_render::dialog_centered(help_size, area);
-    console_frame.render_widget(Clear, centered_area);
-    console_frame.render_widget(paragraph, centered_area);
+    let area_safe = centered_area.intersection(console_frame.size());
+    console_frame.render_widget(Clear, area_safe);
+    console_frame.render_widget(paragraph, area_safe);
 
     let area_yes = hover_sure_yes_area(console_frame);
     let hover_element = the_app.hover_element.clone();
@@ -67,7 +68,8 @@ pub fn ok_draw_disk_space(
         state_app::HOVER_SURE_YES.to_string(),
         "\n  Yes",
     );
-    console_frame.render_widget(the_paragraph, area_yes);
+    let yes_safe = area_yes.intersection(console_frame.size());
+    console_frame.render_widget(the_paragraph, yes_safe);
 
     let area_no = hover_sure_no_area(console_frame);
     let hover_element = the_app.hover_element.clone();
@@ -76,7 +78,8 @@ pub fn ok_draw_disk_space(
         state_app::HOVER_SURE_NO.to_string(),
         "\n  No",
     );
-    console_frame.render_widget(the_paragraph, area_no);
+    let no_safe = area_no.intersection(console_frame.size());
+    console_frame.render_widget(the_paragraph, no_safe);
 }
 
 pub fn hover_sure_yes_area(console_frame: &mut Frame) -> Rect {
@@ -110,14 +113,17 @@ pub fn sure_hover(
 
     let column = hover_event.column;
     let row = hover_event.row;
-    if misc_ui::rect_point_in(column, row, help_centered) {
+
+    let sure_safe = help_centered.intersection(console_frame.size());
+    if misc_ui::rect_point_in(column, row, sure_safe) {
         the_app.hover_element = state_app::HOVER_SURE_DIALOG.to_string();
 
         let hover_help_ok_area = hover_sure_yes_area(console_frame);
         let column = hover_event.column;
         let row = hover_event.row;
 
-        if misc_ui::rect_point_in(column, row, hover_help_ok_area) {
+        let ok_safe = hover_help_ok_area.intersection(console_frame.size());
+        if misc_ui::rect_point_in(column, row, ok_safe) {
             the_app.hover_element = state_app::HOVER_SURE_YES.to_string();
         }
 
@@ -125,7 +131,8 @@ pub fn sure_hover(
         let column = hover_event.column;
         let row = hover_event.row;
 
-        if misc_ui::rect_point_in(column, row, hover_help_no_area) {
+        let no_safe = hover_help_no_area.intersection(console_frame.size());
+        if misc_ui::rect_point_in(column, row, no_safe) {
             the_app.hover_element = state_app::HOVER_SURE_NO.to_string();
         }
     }

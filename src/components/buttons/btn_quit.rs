@@ -43,6 +43,7 @@ pub fn quit_render(
         width: 1,
         height: 1,
     };
+    let white_safe = white_square.intersection(console_frame.size());
     let mut box_style = Style::default().fg(spinner);
 
     if the_app.hover_element == state_app::HOVER_X_QUIT {
@@ -50,7 +51,7 @@ pub fn quit_render(
     }
 
     let paragraph = Paragraph::new("X").style(box_style);
-    console_frame.render_widget(paragraph, white_square);
+    console_frame.render_widget(paragraph, white_safe);
 }
 
 pub fn quit_clicked(the_click: MouseEvent, the_frame: &mut Frame) -> bool {

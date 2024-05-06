@@ -8,9 +8,36 @@ use crate::files::file_xml;
 use crate::misc::misc_fun;
 use crate::state::state_app;
 
+//use http::Uri as http_Uri;
 use std::collections::HashMap;
 use std::error;
 use std::fs;
+//use std::str::FromStr; //
+use url::Url;
+
+pub fn validate_rss(rss_feed: &str) -> Result<Vec<EpisodeMetadataTuple>, String> {
+    let uri_check = Url::parse(rss_feed);
+    if uri_check.is_err() {
+        let bad_url_err = format!("\n Error\n   {:?} \n is not a valid URL", &rss_feed);
+        return Err(bad_url_err); // url == "malformed-uri"
+    }
+
+    let rss_xml = match podcast_directory::directory_read_rss(&rss_feed) {
+        Ok(the_rss) => the_rss,
+        Err(_e) => {
+            let bad_url_err = format!("\n Error\n   {:?} \n does not exist", &rss_feed);
+            return Err(bad_url_err);
+        }
+    };
+
+    match file_xml::xml_dirty_titles_urls(rss_xml) {
+        Ok(titles_urls) => return Ok(titles_urls),
+        Err(_e) => {
+            let bad_xml_err = format!("\n Error\n   {:?} \n is not valid XML", &rss_feed);
+            return Err(bad_xml_err);
+        }
+    };
+}
 
 fn save_media_type(the_app: &mut state_app::DownApp, file_dot_type: &String) {
     let selected_podcast = the_app.selected_podcast.clone();
@@ -45,24 +72,6 @@ fn contents_slurp_data(
             .episode_2_len
             .insert(file_dot_type.clone(), *actual_len);
     }
-}
-
-pub fn validate_rss(rss_feed: &str) -> Result<Vec<EpisodeMetadataTuple>, String> {
-    let rss_xml = match podcast_directory::directory_read_rss(&rss_feed) {
-        Ok(the_rss) => the_rss,
-        Err(_e) => {
-            let bad_url_err = format!("\n Error - {:?} is not valid URL", &rss_feed);
-            return Err(bad_url_err);
-        }
-    };
-
-    match file_xml::xml_dirty_titles_urls(rss_xml) {
-        Ok(titles_urls) => return Ok(titles_urls),
-        Err(_e) => {
-            let bad_xml_err = format!("\n Error - {:?} is not valid XML", &rss_feed);
-            return Err(bad_xml_err);
-        }
-    };
 }
 
 pub fn contents_episode_list(

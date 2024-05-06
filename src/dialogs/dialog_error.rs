@@ -34,8 +34,9 @@ pub fn ok_draw_error(console_frame: &mut Frame, the_app: &state_app::DownApp, a_
         .block(dialog_render::dialog_block("My Error").fg(border_color));
     let error_size = const_areas::ERROR_SIZE_AREA;
     let centered_area = dialog_render::dialog_centered(error_size, area);
-    console_frame.render_widget(Clear, centered_area);
-    console_frame.render_widget(paragraph, centered_area);
+    let area_safe = centered_area.intersection(console_frame.size());
+    console_frame.render_widget(Clear, area_safe);
+    console_frame.render_widget(paragraph, area_safe);
 
     let area_ok = hover_error_ok_area(console_frame);
     let hover_element = the_app.hover_element.clone();
@@ -44,7 +45,8 @@ pub fn ok_draw_error(console_frame: &mut Frame, the_app: &state_app::DownApp, a_
         state_app::HOVER_ERROR_OK.to_string(),
         "\n  Ok",
     );
-    console_frame.render_widget(the_paragraph, area_ok);
+    let ok_safe = area_ok.intersection(console_frame.size());
+    console_frame.render_widget(the_paragraph, ok_safe);
 }
 
 pub fn hover_error_ok_area(console_frame: &mut Frame) -> Rect {
@@ -69,11 +71,14 @@ pub fn error_hover(
     let column = hover_event.column;
     let row = hover_event.row;
 
-    if misc_ui::rect_point_in(column, row, error_centered) {
+    let error_safe = error_centered.intersection(console_frame.size());
+    if misc_ui::rect_point_in(column, row, error_safe) {
         the_app.hover_element = state_app::HOVER_ERROR_DIALOG.to_string();
 
         let area_ok = hover_error_ok_area(console_frame);
-        if misc_ui::rect_point_in(column, row, area_ok) {
+
+        let ok_safe = area_ok.intersection(console_frame.size());
+        if misc_ui::rect_point_in(column, row, ok_safe) {
             the_app.hover_element = state_app::HOVER_ERROR_OK.to_string();
         }
     }

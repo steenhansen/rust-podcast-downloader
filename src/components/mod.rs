@@ -1,15 +1,8 @@
 pub mod buttons;
-
-pub mod episodes;
-pub mod podcasts;
-
 pub mod checkbox_pause;
-
+pub mod episodes;
 pub mod input_address;
 pub mod input_name;
+pub mod podcasts;
 pub mod radio_resource;
-
-pub mod words_feed;
-pub mod words_larger;
-pub mod words_status;
-pub mod words_title;
+pub mod words;

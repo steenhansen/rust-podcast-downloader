@@ -44,17 +44,21 @@ pub fn ok_draw_help(console_frame: &mut Frame, the_app: &state_app::DownApp, a_m
         .block(dialog_render::dialog_block("Commands").fg(border_color));
     let help_size = const_areas::HELP_SIZE_AREA;
     let centered_area = dialog_render::dialog_centered(help_size, area);
-    console_frame.render_widget(Clear, centered_area);
-    console_frame.render_widget(paragraph, centered_area);
 
-    let area_yes = hover_help_ok_area(console_frame);
+    let area_safe = centered_area.intersection(console_frame.size());
+
+    console_frame.render_widget(Clear, area_safe);
+    console_frame.render_widget(paragraph, area_safe);
+
+    let area_ok = hover_help_ok_area(console_frame);
+    let ok_safe = area_ok.intersection(console_frame.size());
     let hover_element = the_app.hover_element.clone();
     let the_paragraph = dialog_render::dialog_yes_no(
         hover_element,
         state_app::HOVER_HELP_OK.to_string(),
         "\n  Ok",
     );
-    console_frame.render_widget(the_paragraph, area_yes);
+    console_frame.render_widget(the_paragraph, ok_safe);
 }
 
 pub fn hover_help_ok_area(console_frame: &mut Frame) -> Rect {
@@ -78,7 +82,8 @@ pub fn help_hover(
 
     let column = hover_event.column;
     let row = hover_event.row;
-    if misc_ui::rect_point_in(column, row, help_centered) {
+    let area_safe = help_centered.intersection(console_frame.size());
+    if misc_ui::rect_point_in(column, row, area_safe) {
         the_app.hover_element = state_app::HOVER_HELP_DIALOG.to_string();
 
         let area_ok = hover_help_ok_area(console_frame);

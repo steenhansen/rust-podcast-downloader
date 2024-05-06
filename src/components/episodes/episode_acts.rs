@@ -20,8 +20,8 @@ pub fn rect_episode(console_frame: &mut Frame) -> Rect {
     }
 
     let mut start_top = 0;
-    if area_frame.height > 10 {
-        start_top = area_frame.height - 10;
+    if area_frame.height > 9 {
+        start_top = area_frame.height - 9;
     }
 
     let elastic_episodes_area = Rect {

@@ -107,7 +107,9 @@ pub fn chunks_media(
             fs::remove_file(working_file).expect("remove-killed-downloading");
             return Ok(false);
         }
-        while media_threads::chunks_sleep() {}
+        while media_threads::chunks_sleep() {
+            //
+        }
         chunk_index += 1;
         let byte_count = chunk_size * chunk_index;
         let mut response_chunk = match client
@@ -118,7 +120,6 @@ pub fn chunks_media(
         {
             Ok(the_response) => the_response,
             Err(_e) => {
-                //warn!("eeeeeeeeeeeeeeeeeeeeef {:?}", _e);
                 return Ok(false);
                 //return Err(Box::new(e));
             }

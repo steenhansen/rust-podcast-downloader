@@ -37,25 +37,13 @@ pub fn directory_get_filename(selected_podcast: String) -> String {
 
 pub fn directory_read_rss(podcast_url: &str) -> Result<String, Box<dyn error::Error>> {
     let mut writer = Vec::new();
-    match Uri::try_from(podcast_url) {
-        Ok(the_uri) => {
-            let the_host = the_uri.host();
-            match the_host {
-                Some(have_host) => have_host,
-                None => return Err("no-host".into()), // url == "www.xe.com"
-            };
-        }
-        Err(e) => {
-            return Err(Box::new(e)); // url == ""
-        }
-    };
     let uri_with_http = Uri::try_from(podcast_url).expect("podcast-rss-err");
     let mut request = request::Request::new(&uri_with_http);
     request.connect_timeout(const_globals::RSS_SOME_TIMEOUT);
     request.read_timeout(const_globals::RSS_SOME_TIMEOUT);
     match request.send(&mut writer) {
         Ok(the_response) => the_response,
-        Err(e) => return Err(Box::new(e)), // url == "https://www.dont-exists.com"
+        Err(e) => return Err(Box::new(e)), // url == "http://no_such-site.zxc"
     };
     let real_bytes = match std::str::from_utf8(&writer) {
         Ok(the_bytes) => the_bytes,

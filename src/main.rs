@@ -52,7 +52,7 @@ fn run_app<B: Backend>(
     loop {
         match the_terminal.draw(|f| app::draw_ui(f, &mut the_app)) {
             Ok(_complete_frame) => {}
-            Err(e) => warn!(" aaaa1111 {:?}", e),
+            Err(e) => warn!("run_app.the_terminal.draw error {:?}", e),
         }
 
         let timeout = tick_rate.saturating_sub(last_tick.elapsed());
@@ -67,7 +67,7 @@ fn run_app<B: Backend>(
                     }
                 }
             }
-            Err(e) => warn!(" bbb22 {:?}", e),
+            Err(e) => warn!("run_app.crossterm::event::poll error {:?}", e),
         }
 
         state::state_reify::reify_type(&mut the_app);

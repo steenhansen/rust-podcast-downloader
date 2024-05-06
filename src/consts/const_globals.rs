@@ -1,5 +1,10 @@
 use std::time::Duration;
 
+pub const DEBUG_FILE: &str = "DEBUG_UI.log";
+
+pub const RSS_TEXT_FILE: &str = "zzzz-podcast_address.rss";
+pub const MEDIA_TEXT_FILE: &str = "zzzz-podcast_type.rss";
+
 pub const BYTE_COUNT_INIT: u32 = 0;
 pub const BYTE_COUNT_START: u32 = 1;
 
@@ -20,11 +25,6 @@ pub const DOWN_BYTES_STOPPED: &str = "DOWN-BYTES-KILLED";
 
 pub const DOWN_BYTES_INITL_SHOW: &str = "       ";
 pub const DOWN_BYTES_START_SHOW: &str = "0000000";
-
-pub const DEBUG_FILE: &str = "DEBUG_log.txt";
-
-pub const RSS_TEXT_FILE: &str = "zzzz-podcast_address.rss";
-pub const MEDIA_TEXT_FILE: &str = "zzzz-podcast_type.rss";
 
 pub const REPLACE_TO_SPACE: &str = " ";
 
