@@ -1,9 +1,8 @@
 [package]
 name = "rust-podcast-downloader"
-version = "0.26.1" # crate version
-authors = ["Florian Dehau <work@fdehau.com>", "The Ratatui Developers"]
-description = "A library that's all about cooking up terminal user interfaces"
-documentation = "https://docs.rs/ratatui/latest/ratatui/ ????????????????????"
+version = "1.0"
+authors = ["Steen Hansen"]
+description = "Rust podcast downloader that uses Ratatui"
 keywords = ["tui", "terminal", "podcast"]
 repository = "https://github.com/steenhansen/rust-podcast-downloader"
 readme = "README.md"
@@ -19,7 +18,6 @@ exclude = [
 
 edition = "2021"
 rust-version = "1.74.0"
-
 
 [dependencies]
 crossterm = { version = "0.27", optional = true }
